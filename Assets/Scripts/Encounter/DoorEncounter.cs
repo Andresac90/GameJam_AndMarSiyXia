@@ -16,6 +16,7 @@ public class DoorEncounter : MonoBehaviour
     [SerializeField] private GameObject npcRoot;
     [SerializeField] private NPCHealth npcHealth;
     [SerializeField] private Transform npcStandPoint;
+    [SerializeField] private PlayerHandsAnimation playerHands;
 
     [Header("Timing")]
     [SerializeField, Min(0f)] private float doorOpenDelay = 0.25f;
@@ -42,6 +43,7 @@ public class DoorEncounter : MonoBehaviour
         if (door == null) door = FindAnyObjectByType<HouseDoor>();
         if (conversation == null) conversation = FindAnyObjectByType<NPCConversationTest>();
         if (player == null) player = FindAnyObjectByType<FirstPersonController_TEST>();
+        if (playerHands == null && player != null) playerHands = player.GetComponent<PlayerHandsAnimation>();
         if (npcHealth == null && npcRoot != null) npcHealth = npcRoot.GetComponentInChildren<NPCHealth>(true);
         if (npcRoot == null && npcHealth != null) npcRoot = npcHealth.gameObject;
 
@@ -165,6 +167,9 @@ public class DoorEncounter : MonoBehaviour
         waitingForNext = true;
         encounterActive = false;
 
+        if (playerHands != null)
+            playerHands.PlayCandyPose();
+
         if (player != null)
             player.SetControlsEnabled(false);
     }
@@ -182,6 +187,9 @@ public class DoorEncounter : MonoBehaviour
         waitingForNext = false;
         encounterActive = false;
         killMode = false;
+
+        if (playerHands != null)
+            playerHands.PlayWalk();
 
         if (conversation != null)
             conversation.WaitForNextKnock();
