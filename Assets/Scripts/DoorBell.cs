@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,7 +27,7 @@ public class DoorBell : MonoBehaviour
     void Update()
     {
         bool pressed = (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame);
-        if (!pressed && fpsCamera == null) return;
+        if (!pressed || fpsCamera == null) return;
 
         if (Physics.Raycast(fpsCamera.transform.position, fpsCamera.transform.forward, out RaycastHit hit, reachRange, ~0, QueryTriggerInteraction.Ignore) && hit.collider == myCollider)
         {
@@ -38,5 +39,14 @@ public class DoorBell : MonoBehaviour
     {
         ringAudio.Play();
         Debug.Log("Ringing Doorbell");
+        StartCoroutine(OpenDoorAfterDelay());
+        
+        
+    }
+
+    private IEnumerator OpenDoorAfterDelay()
+    {
+        yield return new WaitForSeconds(2f);
+        door.OpenDoor();
     }
 }

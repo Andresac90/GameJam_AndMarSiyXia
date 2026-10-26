@@ -146,12 +146,22 @@ public class MoveObjectController : MonoBehaviour
 
 	}
 
-	public void ToggleDoor(int objectNumber = 1)
+	public void OpenDoor(int objectNumebr = 1)
+	{
+		SetDoor(objectNumebr, true);
+	}
+
+	public void CloseDoor(int objectNumber = 1)
+	{
+		SetDoor(objectNumber, false);
+	}
+
+	public void SetDoor(int objectNumber, bool open)
 	{
 		anim.enabled = true;
 		string animBoolNameNum = animBoolName + objectNumber.ToString();
 		bool isOpen = anim.GetBool(animBoolNameNum);
-		anim.SetBool(animBoolNameNum, !isOpen);
+		anim.SetBool(animBoolNameNum, open);
 		msg = getGuiMsg(!isOpen);
 	}
 		
