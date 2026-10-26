@@ -49,9 +49,4 @@ public class UIMainMenu : MonoBehaviour
         throw new NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
