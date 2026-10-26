@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 185c82dbe186841f79cab21cf12b08be
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235376
+  packageName: Modular PSX House Architecture Kit
+  packageVersion: 1.0.0
+  assetPath: Assets/Architecture Pack/Architecture/Materials/Glass_Opaque.mat
+  uploadId: 532994
