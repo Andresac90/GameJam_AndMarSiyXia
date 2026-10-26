@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -32,7 +33,10 @@ public class UIMainMenu : MonoBehaviour
 
     private void OnQuitButtonClicked()
     {
-        throw new NotImplementedException();
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+#endif
+        Application.Quit();
     }
 
     private void OnSettingsButtonClicked()
