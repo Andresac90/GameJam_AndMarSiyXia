@@ -482,7 +482,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Death and Treat
+  m_text: Death or Treat
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4163ac26bf810dd4282c9c923ef48ad5, type: 2}
   m_sharedMaterial: {fileID: 5519368352197125348, guid: 4163ac26bf810dd4282c9c923ef48ad5, type: 2}
