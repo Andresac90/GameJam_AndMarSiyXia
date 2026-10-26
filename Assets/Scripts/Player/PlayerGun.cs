@@ -38,6 +38,9 @@ public class PlayerGun : MonoBehaviour
     private float recoil;
     private Vector3 viewModelBasePosition;
     private Quaternion viewModelBaseRotation;
+    private Vector3 lastWrittenPosition;
+    private Quaternion lastWrittenRotation;
+    private bool hasWrittenViewModel;
     private Coroutine flashRoutine;
 
     private void Awake()
@@ -91,8 +94,6 @@ public class PlayerGun : MonoBehaviour
 
     private void Update()
     {
-        UpdateViewModel();
-
         if (player != null && !player.ControlsEnabled)
             return;
 
@@ -145,17 +146,41 @@ public class PlayerGun : MonoBehaviour
             GoreFX.Instance.BulletImpact(hit.point, hit.normal);
     }
 
-    private void UpdateViewModel()
+    // LateUpdate so recoil is added on top of whatever an Animator wrote this frame.
+    private void LateUpdate()
     {
         recoil = Mathf.Lerp(recoil, 0f, Time.deltaTime * recoilRecovery);
 
         if (viewModel == null)
             return;
 
-        viewModel.localPosition = viewModelBasePosition +
+        // If something (e.g. the hands Animator) moved the view model since our last
+        // write, that pose is the new base. Otherwise keep the stored base so recoil
+        // never accumulates.
+        if (!hasWrittenViewModel ||
+            viewModel.localPosition != lastWrittenPosition ||
+            viewModel.localRotation != lastWrittenRotation)
+        {
+            viewModelBasePosition = viewModel.localPosition;
+            viewModelBaseRotation = viewModel.localRotation;
+        }
+
+        viewModel.localPosition = viewModelBasePosition;
+        viewModel.localRotation = viewModelBaseRotation;
+
+        // Kick up around the gun itself, not the hand mesh pivot (which can be far away).
+        Vector3 pivot = viewModel.parent != null
+            ? viewModel.parent.InverseTransformPoint(muzzle.position)
+            : muzzle.position;
+        Quaternion kick = Quaternion.Euler(-recoil * recoilKickUp, 0f, 0f);
+
+        viewModel.localRotation = kick * viewModelBaseRotation;
+        viewModel.localPosition = pivot + kick * (viewModelBasePosition - pivot) +
                                   new Vector3(0f, recoil * 0.01f, -recoil * recoilKickBack);
-        viewModel.localRotation = Quaternion.Euler(-recoil * recoilKickUp, 0f, 0f) *
-                                  viewModelBaseRotation;
+
+        lastWrittenPosition = viewModel.localPosition;
+        lastWrittenRotation = viewModel.localRotation;
+        hasWrittenViewModel = true;
     }
 
     private Light CreateMuzzleLight()
