@@ -47,7 +47,11 @@ public class PlayerMove : MonoBehaviour
         //TEST OPENING DOOR
         if (testDoor != null && Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
         {
-            testDoor.ToggleDoor();
+            testDoor.OpenDoor();
+        }
+        if(testDoor != null && Keyboard.current != null && Keyboard.current.yKey.wasPressedThisFrame)
+        {
+            testDoor.CloseDoor();
         }
     }
 
