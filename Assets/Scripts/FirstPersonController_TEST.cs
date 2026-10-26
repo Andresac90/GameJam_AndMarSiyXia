@@ -6,7 +6,7 @@ public class FirstPersonController_TEST : MonoBehaviour
 {
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float moveSpeed = 4f;
-    [SerializeField] private float mouseSensitivity = 2f;
+    [SerializeField] private float mouseSensitivity = 1f;
     [SerializeField] private float gravity = -20f;
 
     private CharacterController controller;
