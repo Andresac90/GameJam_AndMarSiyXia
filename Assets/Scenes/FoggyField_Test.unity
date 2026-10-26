@@ -325,7 +325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogSetup
   fogColor: {r: 0.55, g: 0.58, b: 0.62, a: 1}
-  density: 0.04
+  density: 0.001
 --- !u!114 &637775237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,8 +390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a89958941d49c4a94ed43820332c3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldBounds
-  radiusX: 20
-  radiusZ: 20
+  radiusX: 63.1
+  radiusZ: 59.3
   wrapInset: 0.95
 --- !u!1 &1188134792
 GameObject:
