@@ -1768,7 +1768,7 @@ GameObject:
   - component: {fileID: 1001706621}
   - component: {fileID: 1001706620}
   m_Layer: 5
-  m_Name: Button #3 (Red)
+  m_Name: BtnExit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3041,7 +3041,7 @@ GameObject:
   - component: {fileID: 1381797469}
   - component: {fileID: 1381797468}
   m_Layer: 5
-  m_Name: Button #2 (Red)
+  m_Name: BtnSettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3790,6 +3790,7 @@ GameObject:
   - component: {fileID: 1758403902}
   - component: {fileID: 1758403904}
   - component: {fileID: 1758403903}
+  - component: {fileID: 1758403905}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -3861,6 +3862,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1758403901}
   m_CullTransparentMesh: 1
+--- !u!114 &1758403905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758403901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004e6e0a688650f4a89c802adc560b7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIMainMenu
 --- !u!1 &1779332922
 GameObject:
   m_ObjectHideFlags: 0
@@ -3952,7 +3965,7 @@ GameObject:
   - component: {fileID: 1799624200}
   - component: {fileID: 1799624199}
   m_Layer: 5
-  m_Name: Button #1 (Red)
+  m_Name: BtnStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
