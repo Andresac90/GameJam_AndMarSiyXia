@@ -386,6 +386,54 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1266412211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266412203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a3a9f88928446e0bf5abdff1c8ab49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGun
+  aimCamera: {fileID: 0}
+  player: {fileID: 0}
+  viewModel: {fileID: 0}
+  muzzle: {fileID: 0}
+  muzzleFlash: {fileID: 0}
+  audioSource: {fileID: 0}
+  gunshotClip: {fileID: 0}
+  range: 60
+  damage: 100
+  fireCooldown: 0.35
+  recoilDegrees: 2
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  showCrosshair: 1
+  recoilKickBack: 0.06
+  recoilKickUp: 14
+  recoilRecovery: 12
+--- !u!114 &1266412212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266412203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a961e1e70e304a409181176bfc02841, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController_TEST
+  cameraTransform: {fileID: 7893878455091736987}
+  moveSpeed: 4
+  mouseSensitivity: 0.1
+  gravity: -20
+  minPitch: -80
+  maxPitch: 80
 --- !u!4 &1754942256 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9138e6d185313484c8817989f466920a, type: 3}
@@ -821,7 +869,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8826907481437878220, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1266412210}
+    - targetCorrespondingSourceObject: {fileID: 8826907481437878220, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1266412212}
+    - targetCorrespondingSourceObject: {fileID: 8826907481437878220, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1266412211}
   m_SourcePrefab: {fileID: 100100000, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+--- !u!4 &7893878455091736987 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4004814684921759252, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+  m_PrefabInstance: {fileID: 7893878455091736986}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
