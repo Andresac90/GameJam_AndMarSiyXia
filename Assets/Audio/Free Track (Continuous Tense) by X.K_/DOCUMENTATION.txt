@@ -1,0 +1,47 @@
+Documentation Summary:
+
+This script, TrackController, provides a way to control audio playback in Unity using a UI Slider. It allows users to visually see the progress of the audio and to scrub through the audio by dragging the slider.
+
+
+
+
+Key Components:
+
+audioSource (AudioSource): This public variable holds a reference to the AudioSource component that will play the sound. This component needs to be assigned in the Unity Editor.
+
+audioSlider (Slider): This public variable holds a reference to the UI Slider component. This slider will be used to control the playback position of the audio. This component also needs to be assigned in the Unity Editor.
+
+
+
+
+Key Methods:
+
+Start(): This method is called once when the script starts. It adds a listener to the onValueChanged event of the audioSlider. This means that the OnSliderValueChanged() method will be called whenever the user changes the value of the slider.
+
+Update(): This method is called every frame. If the audioSource is playing, it updates the audioSlider's value to reflect the current playback position of the audio. It calculates the position as a fraction of the total audio samples.
+
+OnSliderValueChanged(float value): This method is called when the user interacts with the audioSlider. It sets the timeSamples property of the audioSource based on the slider's value. This effectively changes the playback position of the audio.
+
+
+
+
+Usage:
+
+Create a Canvas in your scene if you don't have one already.
+
+Add a Slider UI element to the Canvas.
+
+Add an AudioSource component to a GameObject in your scene (or the same GameObject as this script). Assign an audio clip to it.
+
+Create a new C# script and copy this code into it.
+
+Attach the script to the same GameObject that has the AudioSource.
+
+In the Inspector for the GameObject, drag the AudioSource component to the audioSource field of the TrackController script.
+
+Drag the Slider component to the audioSlider field of the TrackController script.
+
+
+
+
+Now, when you run the game, you should be able to control the audio playback using the slider.

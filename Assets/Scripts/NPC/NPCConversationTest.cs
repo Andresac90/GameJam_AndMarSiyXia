@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -187,6 +186,15 @@ public class NPCConversationTest : MonoBehaviour
             dialoguePanel.SetActive(true);
 
         StartEncounter();
+    }
+
+    /// <summary>
+    /// Lets a spawned house hand over its NPC's renderer, so persona materials
+    /// still work when the NPC is part of a prefab instead of a scene object.
+    /// </summary>
+    public void SetNPCRenderer(Renderer renderer)
+    {
+        npcRenderer = renderer;
     }
 
     /// <summary>Shows the reveal after the player actually shot the NPC.</summary>
@@ -703,7 +711,7 @@ public class NPCConversationTest : MonoBehaviour
         KillChosen.Invoke();
     }
 
-    
+
     private void FinishDecision(string result)
     {
         SetControls(false);
