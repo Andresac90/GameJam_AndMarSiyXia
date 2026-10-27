@@ -167,7 +167,9 @@ public class DoorEncounter : MonoBehaviour
         waitingForNext = true;
         encounterActive = false;
 
-        if (playerHands != null)
+        // With a GameLoop the candy count (and the hands) follow the game rules
+        // (monsters steal instead of giving); without one, every spare is a candy.
+        if (playerHands != null && FindAnyObjectByType<GameLoop>() == null)
             playerHands.PlayCandyPose();
 
         if (player != null)

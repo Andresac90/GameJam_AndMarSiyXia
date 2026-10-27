@@ -19,6 +19,8 @@ public class Warden : MonoBehaviour
     [SerializeField, Min(0.1f)] private float runSpeed = 4.4f;
     [SerializeField, Min(0.1f)] private float rampTime = 25f;
     [SerializeField, Min(0.3f)] private float catchDistance = 1.3f;
+    [Tooltip("While the player is at a house, the Warden waits this far away and watches.")]
+    [SerializeField, Min(2f)] private float lurkDistance = 12f;
 
     [Header("Look")]
     [Tooltip("Optional model to use instead of the placeholder body.")]
@@ -28,6 +30,9 @@ public class Warden : MonoBehaviour
     public event Action CaughtPlayer;
     public State CurrentState { get; private set; } = State.Frozen;
     public bool IsAwake => CurrentState == State.Awake;
+
+    /// <summary>Set by GameLoop while the player is at a house: the Warden keeps its distance.</summary>
+    public bool HoldBack { get; set; }
 
     private Transform target;
     private float awakeTime;
@@ -125,6 +130,12 @@ public class Warden : MonoBehaviour
 
         if (CurrentState != State.Awake) return;
 
+        if (HoldBack)
+        {
+            Lurk(toPlayer, distance);
+            return;
+        }
+
         awakeTime += Time.deltaTime;
         float speed = Mathf.Lerp(walkSpeed, runSpeed, Mathf.Clamp01(awakeTime / rampTime));
 
@@ -150,6 +161,21 @@ public class Warden : MonoBehaviour
         }
 
         voice.pitch = Mathf.Lerp(0.8f, 1.2f, Mathf.Clamp01(1f - distance / 30f));
+    }
+
+    /// <summary>Hangs back at the edge of the house's light, staring, until the player leaves.</summary>
+    private void Lurk(Vector3 toPlayer, float distance)
+    {
+        if (distance > 0.001f)
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(toPlayer), Time.deltaTime * 4f);
+
+        float error = distance - lurkDistance;
+        if (Mathf.Abs(error) < 0.5f) return;
+
+        // Approach up to the lurk ring, or back away if the player walks toward it.
+        float direction = Mathf.Sign(error);
+        Vector3 step = toPlayer / Mathf.Max(distance, 0.001f) * walkSpeed * direction * Time.deltaTime;
+        transform.position = new Vector3(transform.position.x + step.x, groundY, transform.position.z + step.z);
     }
 
     private void SetEyes(float level)

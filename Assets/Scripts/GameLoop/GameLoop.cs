@@ -28,6 +28,8 @@ public class GameLoop : MonoBehaviour
     [Header("Warden")]
     [SerializeField] private Warden warden;
     [SerializeField, Min(5f)] private float wardenSpawnDistance = 25f;
+    [Tooltip("Being this close to the current house's door counts as being at the house (safe from the Warden).")]
+    [SerializeField, Min(1f)] private float sanctuaryRadius = 9f;
 
     [Header("References (auto-found if empty)")]
     [SerializeField] private NPCConversationTest conversation;
@@ -54,6 +56,10 @@ public class GameLoop : MonoBehaviour
     private string message;
     private float messageUntil;
     private float flashUntil;
+    private Transform currentDoor;
+    private bool inEncounter;
+    private bool sanctuaryWarned;
+    private PlayerHandsAnimation hands;
 
     private void Awake()
     {
@@ -61,6 +67,7 @@ public class GameLoop : MonoBehaviour
         if (spawner == null) spawner = FindAnyObjectByType<HouseSpawner>();
         if (player == null) player = FindAnyObjectByType<FirstPersonController_TEST>();
         if (field == null) field = FindAnyObjectByType<FieldBounds>();
+        if (player != null) hands = player.GetComponent<PlayerHandsAnimation>();
 
         TimeLeft = houseTime;
         beaconPending = firstHouseLit;
@@ -74,6 +81,7 @@ public class GameLoop : MonoBehaviour
         if (conversation == null) return;
         conversation.CandyChosen += OnSpared;
         conversation.KillChosen += OnKilled;
+        conversation.NextEncounterRequested += OnLeftHouse;
     }
 
     private void OnDisable()
@@ -82,6 +90,7 @@ public class GameLoop : MonoBehaviour
         {
             conversation.CandyChosen -= OnSpared;
             conversation.KillChosen -= OnKilled;
+            conversation.NextEncounterRequested -= OnLeftHouse;
         }
         if (spawner != null) spawner.HouseSpawned -= OnHouseSpawned;
     }
@@ -101,7 +110,11 @@ public class GameLoop : MonoBehaviour
 
     private void Update()
     {
-        if (ended || timerExpired) return;
+        if (ended) return;
+
+        UpdateSanctuary();
+
+        if (timerExpired) return;
 
         bool inDialogue = player != null && !player.ControlsEnabled;
         if (pauseTimerDuringDialogue && inDialogue) return;
@@ -170,6 +183,7 @@ public class GameLoop : MonoBehaviour
     private void SetCandy(int value)
     {
         Candy = Mathf.Max(0, value);
+        if (hands != null) hands.SetCandyCount(Candy); // bucket fills/empties with the count
         onCandyChanged?.Invoke(Candy);
     }
 
@@ -178,6 +192,41 @@ public class GameLoop : MonoBehaviour
         HouseLampposts lamps = house.GetComponent<HouseLampposts>();
         if (lamps != null) lamps.Lit = beaconPending;
         beaconPending = false;
+
+        inEncounter = false;
+        HouseDoor door = house.GetComponentInChildren<HouseDoor>(true);
+        currentDoor = door != null ? door.transform : house.transform;
+        if (door != null) door.Knocked += () => inEncounter = true;
+    }
+
+    private void OnLeftHouse() => inEncounter = false;
+
+    // The house is a sanctuary: from arriving at the door until the player leaves
+    // (Next Encounter), the Warden only lurks at a distance and watches.
+    private void UpdateSanctuary()
+    {
+        if (warden == null || player == null) return;
+
+        bool nearDoor = false;
+        if (currentDoor != null)
+        {
+            Vector3 offset = player.transform.position - currentDoor.position;
+            offset.y = 0f;
+            nearDoor = offset.magnitude <= sanctuaryRadius;
+        }
+
+        bool safe = inEncounter || nearDoor;
+        warden.HoldBack = safe;
+
+        if (safe && warden.IsAwake && !sanctuaryWarned)
+        {
+            sanctuaryWarned = true;
+            Show("The Warden stops at the edge of the light... it's waiting for you to leave.");
+        }
+        else if (!safe)
+        {
+            sanctuaryWarned = false;
+        }
     }
 
     // ------------------------------------------------------------ win / lose
