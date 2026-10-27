@@ -15,7 +15,12 @@ public class NPCConversationTest : MonoBehaviour
     [Header("Encounter Integration")]
     [SerializeField] private bool startEncounterOnPlay = true;
 
+    [SerializeField] private Animator basketAnimator;
+    [SerializeField] private CandyLayer candyLayer;
+    [SerializeField] private string gettingCandyTrigger = "GettingCandy";
+
     public bool EncounterFinished => decisionMade;
+    public bool CurrentNPCIsMonster => trueIdentity == NPCIdentity.Monster;
 
     private enum NPCIdentity
     {
@@ -649,6 +654,7 @@ public class NPCConversationTest : MonoBehaviour
         }
     }
 
+
     private void ChooseCandy()
     {
         if (waitingForAI || typing || decisionMade ||
@@ -662,9 +668,19 @@ public class NPCConversationTest : MonoBehaviour
         timesSpared++;
         candiesReceived++;
 
+        if (basketAnimator != null)
+        {
+            basketAnimator.SetTrigger(gettingCandyTrigger);
+        }
+
+        if (candyLayer != null)
+        {
+            candyLayer.UpdateCandyCount(candiesReceived);
+        }
+
         FinishDecision(
-            "You give " + currentNPCName +
-            " the candy and step away from the door.");
+             currentNPCName +
+            " gives you the candy and step away from the door.");
     }
 
     private void ChooseKill()

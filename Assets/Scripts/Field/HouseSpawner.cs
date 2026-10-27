@@ -18,6 +18,10 @@ public class HouseSpawner : MonoBehaviour
 
     GameObject currentHouse;
 
+    /// <summary>Raised right after a new house is placed (before its Start runs).</summary>
+    public event System.Action<GameObject> HouseSpawned;
+    public GameObject CurrentHouse => currentHouse;
+
     void Start() => SpawnHouse();
 
     public void SpawnHouse()
@@ -41,6 +45,8 @@ public class HouseSpawner : MonoBehaviour
         // Street lamps lead the player to the new house through the fog.
         if (currentHouse.GetComponent<HouseLampposts>() == null)
             currentHouse.AddComponent<HouseLampposts>();
+
+        HouseSpawned?.Invoke(currentHouse);
     }
 
     Vector3 FindSpawnPoint()

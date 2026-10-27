@@ -37,7 +37,22 @@ public class HouseLampposts : MonoBehaviour
     [SerializeField] private Material glowMaterial;
     [SerializeField] private Material ironMaterial;
 
+    [Tooltip("Off = the lamps stand dark (GameLoop only lights them as a reward/beacon).")]
+    [SerializeField] private bool lit = true;
+
     private static Texture2D glowTexture;
+    private readonly System.Collections.Generic.List<LampFlicker> flickers = new System.Collections.Generic.List<LampFlicker>();
+
+    public bool Lit
+    {
+        get => lit;
+        set
+        {
+            lit = value;
+            foreach (LampFlicker flicker in flickers)
+                if (flicker != null) flicker.lit = value;
+        }
+    }
 
     private Transform Frame => lampAnchor != null ? lampAnchor : transform;
 
@@ -118,6 +133,8 @@ public class HouseLampposts : MonoBehaviour
 
         LampFlicker flicker = lamp.AddComponent<LampFlicker>();
         flicker.Init(light, lantern.GetComponent<Renderer>(), glow, Random.value < 0.25f);
+        flicker.lit = lit;
+        flickers.Add(flicker);
     }
 
     private static GameObject AddPart(Transform parent, PrimitiveType type, Material material,
@@ -167,9 +184,13 @@ public class HouseLampposts : MonoBehaviour
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.shadowCastingMode = ShadowCastingMode.Off;
         renderer.receiveShadows = false;
-        renderer.maxParticleSize = 2f;
+        renderer.maxParticleSize = 0.35f;
 
         Material mat = glowMaterial != null ? new Material(glowMaterial) : CreateGlowFallback();
+        // Fade the glow out as the camera walks up to the lamp, so it never floods the screen.
+        mat.EnableKeyword("_FADING_ON");
+        mat.SetFloat("_CameraFadingEnabled", 1f);
+        mat.SetVector("_CameraFadeParams", new Vector4(1f, 1f / 3f, 0f, 0f));
         Texture2D texture = GetGlowTexture();
         mat.SetTexture("_BaseMap", texture);
         mat.SetTexture("_MainTex", texture);
@@ -245,6 +266,8 @@ public class HouseLampposts : MonoBehaviour
 /// <summary>Old-lamp flicker: gentle wobble, and some lamps sputter and die for a moment.</summary>
 public class LampFlicker : MonoBehaviour
 {
+    public bool lit = true;
+
     private Light lampLight;
     private Renderer lantern;
     private ParticleSystemRenderer glow;
@@ -272,6 +295,19 @@ public class LampFlicker : MonoBehaviour
     private void Update()
     {
         if (lampLight == null) return;
+
+        lampLight.enabled = lit;
+        if (!lit)
+        {
+            if (lantern != null)
+            {
+                lantern.GetPropertyBlock(block);
+                block.SetColor("_EmissionColor", Color.black);
+                lantern.SetPropertyBlock(block);
+            }
+            if (glow != null) glow.enabled = false;
+            return;
+        }
 
         float t = Time.time;
         float level = 0.85f + Mathf.PerlinNoise(seed, t * 3f) * 0.3f;
