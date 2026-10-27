@@ -691,6 +691,11 @@ MonoBehaviour:
   warden: {fileID: 0}
   wardenSpawnDistance: 25
   sanctuaryRadius: 9
+  directionalLight: {fileID: 0}
+  awakeLightColor: {r: 1, g: 0, b: 0, a: 1}
+  musicSource: {fileID: 0}
+  ambientMusic: {fileID: 0}
+  suspenseMusic: {fileID: 0}
   conversation: {fileID: 0}
   spawner: {fileID: 0}
   player: {fileID: 0}
@@ -987,9 +992,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5932998560753241200, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6464361106923855022, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: moveSpeed
       value: 10.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.661491
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.661491
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.661491
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -997,7 +1018,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.z
