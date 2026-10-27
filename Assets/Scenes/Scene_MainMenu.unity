@@ -251,7 +251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Death or Treat
+  m_text: Threat or Treat
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4163ac26bf810dd4282c9c923ef48ad5, type: 2}
   m_sharedMaterial: {fileID: 5519368352197125348, guid: 4163ac26bf810dd4282c9c923ef48ad5, type: 2}
@@ -1739,6 +1739,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIMainMenu
   panelMenu: {fileID: 1758403901}
   panelNews: {fileID: 2130764052}
+  playSceneName: Play_Scene
 --- !u!1 &1715354849
 GameObject:
   m_ObjectHideFlags: 0

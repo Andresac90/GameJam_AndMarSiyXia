@@ -332,7 +332,7 @@ public class GameLoop : MonoBehaviour
         yield return new WaitForSeconds(2f);
         EndGame();
         onWin?.Invoke();
-        EventBus.Instance.EventTrigger("EndResult");
+        yield return ShowEndResult();
         // === MODIFIED: removed EventTrigger("CandyReceived") (no arg + wrong semantics).
         // Candy count is already broadcast from SetCandy when the last candy was gained. ===
     }
@@ -356,7 +356,25 @@ public class GameLoop : MonoBehaviour
         yield return new WaitForSeconds(1.6f);
         EndGame();
         onLose?.Invoke();
-        EventBus.Instance.EventTrigger("EndResult"); // result panel for losing too, not only winning
+        yield return ShowEndResult(); // result panel for losing too, not only winning
+    }
+
+    // The result panel's Canvas may only just have been re-activated (e.g. caught before ever
+    // talking to anyone), so its UIEndResult.Start hasn't subscribed yet: give it two frames.
+    private IEnumerator ShowEndResult()
+    {
+        yield return null;
+        yield return null;
+        EventBus.Instance.EventTrigger("EndResult");
+    }
+
+    // True when Xiaowei's result panel (with Restart/Exit) is actually on screen.
+    private bool ResultPanelVisible()
+    {
+        if (endResultUI == null) return false;
+        foreach (Transform t in endResultUI.GetComponentsInChildren<Transform>(true))
+            if (t.name == "PanelResult") return t.gameObject.activeInHierarchy;
+        return false;
     }
 
     private void EndGame()
@@ -416,7 +434,8 @@ public class GameLoop : MonoBehaviour
 
         if (ended && (endScreenShown || EndScreenReady()))
         {
-            if (endResultUI != null) DrawEndTitle(scale); // title above Xiaowei's result panel
+            // Title above Xiaowei's result panel; if that panel isn't showing, our full screen with buttons.
+            if (ResultPanelVisible()) DrawEndTitle(scale);
             else DrawEndScreen(scale);
             return;
         }
