@@ -427,6 +427,8 @@ GameObject:
   - component: {fileID: 637775235}
   - component: {fileID: 637775237}
   - component: {fileID: 637775236}
+  - component: {fileID: 637775238}
+  - component: {fileID: 637775239}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -434,6 +436,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &637775238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d620bc755c6343a88b49b8355e0c537e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightAtmosphere
+  moonLight: {fileID: 1451124782}
+  lanternMaterial: {fileID: 2100000, guid: cfc7f93f29654d1299c549b523b6e390, type: 2}
+  glowMaterial: {fileID: 2100000, guid: 8a562323690f4b229f125f4417fb07f6, type: 2}
+  fogMaterial: {fileID: 2100000, guid: 84916f9831b14e7f9afc8216551af772, type: 2}
+--- !u!114 &637775239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41bd616183d0438f8087162ddbf0b82a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VolumetricFog
+  target: {fileID: 857733400}
+  fogMaterial: {fileID: 2100000, guid: 84916f9831b14e7f9afc8216551af772, type: 2}
 --- !u!4 &637775235
 Transform:
   m_ObjectHideFlags: 0

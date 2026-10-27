@@ -25,12 +25,22 @@ public class HouseSpawner : MonoBehaviour
         if (currentHouse != null) Destroy(currentHouse);
 
         Vector3 pos = FindSpawnPoint();
-        currentHouse = Instantiate(housePrefab, pos, Quaternion.Euler(0, Random.Range(0f, 360f), 0));
+        // Front of the house (local -Z) faces roughly toward the field center, so the
+        // lamp trail leads inward and the player arrives at the door, not behind it.
+        Vector3 outward = pos - field.Center; outward.y = 0f;
+        float yaw = outward.sqrMagnitude > 0.01f
+            ? Quaternion.LookRotation(outward).eulerAngles.y + Random.Range(-40f, 40f)
+            : Random.Range(0f, 360f);
+        currentHouse = Instantiate(housePrefab, pos, Quaternion.Euler(0, yaw, 0));
 
         // Let the house tell us when it's done.
         var house = currentHouse.GetComponent<House>();
         if (house == null) house = currentHouse.AddComponent<House>();
         house.spawner = this;
+
+        // Street lamps lead the player to the new house through the fog.
+        if (currentHouse.GetComponent<HouseLampposts>() == null)
+            currentHouse.AddComponent<HouseLampposts>();
     }
 
     Vector3 FindSpawnPoint()
