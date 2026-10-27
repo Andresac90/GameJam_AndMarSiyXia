@@ -439,33 +439,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &637775241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637775234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c42c514b9a9445f8beff9822603a507, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PSXRetroLook
-  psxTemplate: {fileID: 2100000, guid: 34ff1d433f28415ebb137f0a917e8130, type: 2}
---- !u!114 &637775242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637775234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f94d1c3b7404fef80ebfeda83378328, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameLoop
-  candyToWin: 5
-  houseTime: 90
 --- !u!4 &637775235
 Transform:
   m_ObjectHideFlags: 0
@@ -678,6 +651,60 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &637775241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c42c514b9a9445f8beff9822603a507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PSXRetroLook
+  renderScale: 0.4
+  vertexResolution: 160
+  affineWarp: 1
+  colorDepth: 32
+  dithering: 1
+  lightSteps: 8
+  psxTemplate: {fileID: 2100000, guid: 34ff1d433f28415ebb137f0a917e8130, type: 2}
+  convertSceneMaterials: 1
+  rescanInterval: 1
+--- !u!114 &637775242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f94d1c3b7404fef80ebfeda83378328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameLoop
+  candyToWin: 5
+  houseTime: 90
+  firstHouseLit: 1
+  pauseTimerDuringDialogue: 1
+  warden: {fileID: 0}
+  wardenSpawnDistance: 25
+  sanctuaryRadius: 9
+  conversation: {fileID: 0}
+  spawner: {fileID: 0}
+  player: {fileID: 0}
+  field: {fileID: 0}
+  mainMenuScene: Scene_MainMenu
+  onCandyChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onWin:
+    m_PersistentCalls:
+      m_Calls: []
+  onLose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &711309951
 GameObject:
   m_ObjectHideFlags: 0
@@ -1583,6 +1610,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCConversationTest
   startEncounterOnPlay: 0
+  basketAnimator: {fileID: 0}
+  candyLayer: {fileID: 0}
+  gettingCandyTrigger: GettingCandy
   dialogueAI: {fileID: 0}
   dialoguePanel: {fileID: 1627066908}
   dialogueText: {fileID: 711309953}
@@ -2036,7 +2066,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1188134793
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2125,7 +2155,7 @@ Transform:
   m_GameObject: {fileID: 1188134792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -20.098658, y: 0.49999997, z: 0}
+  m_LocalPosition: {x: -20.098658, y: -0.87, z: 0}
   m_LocalScale: {x: 25.79, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
