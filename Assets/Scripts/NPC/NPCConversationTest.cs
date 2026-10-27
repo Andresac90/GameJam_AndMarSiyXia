@@ -15,20 +15,9 @@ public class NPCConversationTest : MonoBehaviour
     [Header("Encounter Integration")]
     [SerializeField] private bool startEncounterOnPlay = true;
 
-    [Header("Candy Animations")]
-    private Animator basketAnimator;
-    [SerializeField]
-    private string[] candyAnimationStates =
-{
-    "GettingCandy",
-    "GettingCandy1",
-    "GettingCandy 2",
-    "GettingCandy3"
-};
-
-    [SerializeField] private PlayerHandsAnimation handsAnimation;
-
-    private int candyAnimationIndex = 0;
+    [SerializeField] private Animator basketAnimator;
+    [SerializeField] private CandyLayer candyLayer;
+    [SerializeField] private string gettingCandyTrigger = "GettingCandy";
 
     public bool EncounterFinished => decisionMade;
 
@@ -675,21 +664,23 @@ public class NPCConversationTest : MonoBehaviour
 
         decisionMade = true;
         CandyChosen?.Invoke();
-
         timesSpared++;
         candiesReceived++;
 
-        if (handsAnimation != null)
+        if (basketAnimator != null)
         {
-            handsAnimation.AddCandy();
+            basketAnimator.SetTrigger(gettingCandyTrigger);
+        }
+
+        if (candyLayer != null)
+        {
+            candyLayer.UpdateCandyCount(candiesReceived);
         }
 
         FinishDecision(
-            currentNPCName +
-            " gives you the candy and you step away from the door.");
+             currentNPCName +
+            " gives you the candy and step away from the door.");
     }
-
-
 
     private void ChooseKill()
     {
