@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,16 +8,32 @@ using UnityEngine.UI;
 
 public class UIMainMenu : MonoBehaviour
 {
-    private Dictionary<string, UIBehaviour> uiButtons = new Dictionary<string, UIBehaviour>();
+    private Dictionary<string, UIBehaviour> uiElements = new Dictionary<string, UIBehaviour>();
+    [SerializeField] private GameObject panelMenu;
+    [SerializeField] private GameObject panelNews;
 
     void Start()
     {
-        Button[] buttons = GetComponentsInChildren<Button>(true);
-        foreach (Button button in buttons)
+        FindUIElements<Button>(uiElements);
+
+        (uiElements["BtnStart"] as Button).onClick.AddListener(OnStartButtonClicked);
+        (uiElements["BtnSettings"] as Button).onClick.AddListener(OnSettingsButtonClicked);
+        (uiElements["BtnQuit"] as Button).onClick.AddListener(OnQuitButtonClicked);
+        (uiElements["BtnContinue"] as Button).onClick.AddListener(OnContinueButtonClicked);
+
+        panelNews.SetActive(false);
+
+    }
+
+
+    private void FindUIElements<T>(Dictionary<string, UIBehaviour> uiElements) where T:UIBehaviour
+    {
+        T[] buttons = GetComponentsInChildren<T>(true);
+        foreach (T button in buttons)
         {
-            if (!uiButtons.ContainsKey(button.name))
+            if (!uiElements.ContainsKey(button.name))
             {
-                uiButtons.Add(button.name, button);
+                uiElements.Add(button.name, button);
                 print($"Button added: {button.name}");
             }
             else
@@ -24,11 +41,12 @@ public class UIMainMenu : MonoBehaviour
                 Debug.LogWarning($"Duplicate button name found: {button.name}. Only the first occurrence will be stored.");
             }
         }
+    }
 
-        (uiButtons["BtnStart"] as Button).onClick.AddListener(OnStartButtonClicked);
-        (uiButtons["BtnSettings"] as Button).onClick.AddListener(OnSettingsButtonClicked);
-        (uiButtons["BtnQuit"] as Button).onClick.AddListener(OnQuitButtonClicked);
-
+    private void OnContinueButtonClicked()
+    {
+        panelNews.SetActive(false);
+        // To Do: load next scene
     }
 
     private void OnQuitButtonClicked()
@@ -46,7 +64,8 @@ public class UIMainMenu : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        throw new NotImplementedException();
+        panelMenu.SetActive(false);
+        panelNews.SetActive(true);
     }
 
 }
