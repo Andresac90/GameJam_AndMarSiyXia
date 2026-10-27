@@ -1,10 +1,4 @@
 using UnityEngine;
-
-/// <summary>
-/// Drives the first-person hands (PlayerKid.controller):
-/// the Walk cycle only advances while the player moves, and
-/// GettingCandy is played as a pose when candy is given.
-/// </summary>
 [RequireComponent(typeof(Animator))]
 public class PlayerHandsAnimation : MonoBehaviour
 {
@@ -45,7 +39,10 @@ public class PlayerHandsAnimation : MonoBehaviour
         }
 
         float target = canMove && speed > moveThreshold ? 1f : 0f;
-        animator.speed = Mathf.MoveTowards(animator.speed, target, Time.deltaTime * blendSpeed);
+        animator.speed = Mathf.MoveTowards(
+            animator.speed,
+            target,
+            Time.deltaTime * blendSpeed);
     }
 
     public void PlayCandyPose()
