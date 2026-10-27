@@ -3,6 +3,8 @@
 // - Affine texture mapping (warping textures)
 // - Chunky light falloff, colour banding + 4x4 ordered dithering
 // - Still uses URP main/additional lights (Forward and Forward+), shadows and fog.
+// Emission/alpha-clip use multi_compile (not shader_feature): PSXRetroLook creates these materials
+// at runtime, so no saved material would keep those variants in a build (glowing eyes went black).
 // Global settings come from PSXRetroLook (_PSXVertexResolution, _PSXAffine, _PSXColorDepth, _PSXDither, _PSXLightSteps).
 Shader "PSX/URP Lit"
 {
@@ -63,8 +65,8 @@ Shader "PSX/URP Lit"
             #pragma vertex vert
             #pragma fragment frag
 
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma shader_feature_local_fragment _EMISSION
+            #pragma multi_compile_local_fragment _ _ALPHATEST_ON
+            #pragma multi_compile_local_fragment _ _EMISSION
 
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
@@ -219,7 +221,7 @@ Shader "PSX/URP Lit"
             #pragma target 2.0
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
-            #pragma shader_feature_local _ALPHATEST_ON
+            #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma multi_compile_instancing
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
@@ -239,7 +241,7 @@ Shader "PSX/URP Lit"
             #pragma target 2.0
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature_local _ALPHATEST_ON
+            #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma multi_compile_instancing
 
             struct Attributes
@@ -286,7 +288,7 @@ Shader "PSX/URP Lit"
             #pragma target 2.0
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature_local _ALPHATEST_ON
+            #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma multi_compile_instancing
 
             struct Attributes
