@@ -484,6 +484,7 @@ GameObject:
   - component: {fileID: 6464361106923855022}
   - component: {fileID: 5502706460325443073}
   - component: {fileID: 1666051059879024573}
+  - component: {fileID: 4446624274554594092}
   m_Layer: 0
   m_Name: PlayerKid
   m_TagString: Untagged
@@ -669,6 +670,21 @@ MonoBehaviour:
   moveThreshold: 0.1
   blendSpeed: 4
   crossFade: 0.15
+--- !u!114 &4446624274554594092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8826907481437878220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64952f0adefcfd47bfcbcacaa670e65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CandyLayer
+  candyLayer: {fileID: 0}
+  candiesPerLayer: 20
+  heightPerLayer: 0.1
 --- !u!1001 &5739526787384030090
 PrefabInstance:
   m_ObjectHideFlags: 0

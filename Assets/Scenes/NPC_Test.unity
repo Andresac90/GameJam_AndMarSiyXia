@@ -1121,6 +1121,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCConversationTest
   startEncounterOnPlay: 0
+  basketAnimator: {fileID: 2058709764}
+  candyLayer: {fileID: 2058709763}
+  gettingCandyTrigger: GettingCandy
   dialogueAI: {fileID: 0}
   dialoguePanel: {fileID: 70822938}
   dialogueText: {fileID: 744785475}
@@ -2560,6 +2563,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1229762494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4777635409918916857, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+  m_PrefabInstance: {fileID: 1977600217}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1234632436
 GameObject:
   m_ObjectHideFlags: 0
@@ -3402,6 +3410,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4446624274554594092, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: candyLayer
+      value: 
+      objectReference: {fileID: 1229762494}
+    - target: {fileID: 4446624274554594092, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: heightPerLayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.6999999
@@ -3473,6 +3489,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a961e1e70e304a409181176bfc02841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController_TEST
+--- !u!114 &2058709763 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4446624274554594092, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+  m_PrefabInstance: {fileID: 1977600217}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64952f0adefcfd47bfcbcacaa670e65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CandyLayer
+--- !u!95 &2058709764 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5502706460325443073, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+  m_PrefabInstance: {fileID: 1977600217}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2134583715
 GameObject:
   m_ObjectHideFlags: 0
