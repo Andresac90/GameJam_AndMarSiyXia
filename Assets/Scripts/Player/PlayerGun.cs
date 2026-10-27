@@ -99,6 +99,7 @@ public class PlayerGun : MonoBehaviour
 
         if (Mouse.current != null &&
             Mouse.current.leftButton.wasPressedThisFrame &&
+            CursorLock.IsLocked && // WebGL: the click that captures the mouse shouldn't fire
             Time.time >= nextFireTime)
         {
             Fire();

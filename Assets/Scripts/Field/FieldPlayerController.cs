@@ -29,7 +29,7 @@ public class FieldPlayerController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
+        CursorLock.Set(true);
     }
 
     void Update()

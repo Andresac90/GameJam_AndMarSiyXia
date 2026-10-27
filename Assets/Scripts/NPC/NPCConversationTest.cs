@@ -22,6 +22,9 @@ public class NPCConversationTest : MonoBehaviour
     public bool EncounterFinished => decisionMade;
     public bool CurrentNPCIsMonster => trueIdentity == NPCIdentity.Monster;
 
+    /// <summary>Extra line for the result screen, e.g. what the Warden does (set by GameLoop).</summary>
+    public string OutcomeNote { get; set; }
+
     private enum NPCIdentity
     {
         Human,
@@ -36,15 +39,6 @@ public class NPCConversationTest : MonoBehaviour
         Charming,
         Nervous,
         MatterOfFact
-    }
-
-    private enum DeceptionStyle
-    {
-        Omission,
-        DirectLie,
-        MisleadingTruth,
-        Deflection,
-        EmotionalManipulation
     }
 
     [Header("AI")]
@@ -65,7 +59,7 @@ public class NPCConversationTest : MonoBehaviour
     [SerializeField] private Material[] personaMaterials;
 
     [Header("Conversation")]
-    [SerializeField, Min(1)] private int maxQuestions = 4;
+    [SerializeField, Min(1)] private int maxQuestions = 3;
     [SerializeField] private bool keepIdentityAcrossEncounters = true;
     [SerializeField, Min(1)] private int maxHistoryEntries = 12;
 
@@ -80,7 +74,6 @@ public class NPCConversationTest : MonoBehaviour
 
     private NPCIdentity trueIdentity;
     private NPCPersona currentPersona;
-    private DeceptionStyle deceptionStyle;
 
     private bool identityInitialized;
     private bool waitingForAI;
@@ -91,17 +84,19 @@ public class NPCConversationTest : MonoBehaviour
     private int questionsAsked;
 
     private string currentNPCName;
-    private string currentMotive;
-    private string currentSecret;
-    private string currentTruth;
-    private string currentCoverStory;
-    private string currentClue;
     private string currentHouseDetail;
 
-    // Kept separately from the visible dialogue.
-    // The AI still receives this history for context.
-    private readonly List<string> conversationHistory =
-        new List<string>();
+    // What the kid remembers about this resident (shown on screen) and the
+    // resident's own fact sheet (given to the AI). A monster gets one of the
+    // remembered facts wrong; the AI is never told whether it is a monster.
+    private readonly List<string> knownFacts = new List<string>();
+    private readonly List<string> sheetFacts = new List<string>();
+    private string currentQuirk;
+    private string currentGreeting;
+
+    // The real back-and-forth, sent to the AI as chat turns.
+    private readonly List<NPCDialogueAI.ChatMessage> conversationHistory =
+        new List<NPCDialogueAI.ChatMessage>();
 
     private Coroutine typingCoroutine;
 
@@ -234,9 +229,6 @@ public class NPCConversationTest : MonoBehaviour
         currentPersona = (NPCPersona)UnityEngine.Random.Range(
             0, Enum.GetValues(typeof(NPCPersona)).Length);
 
-        deceptionStyle = (DeceptionStyle)UnityEngine.Random.Range(
-            0, Enum.GetValues(typeof(DeceptionStyle)).Length);
-
         CreateCase();
         ApplyAppearance();
 
@@ -246,30 +238,33 @@ public class NPCConversationTest : MonoBehaviour
         if (nextEncounterButton != null)
             nextEncounterButton.gameObject.SetActive(false);
 
+        OutcomeNote = null;
+        SetQuestionUIVisible(true);
         SetDecisionButtons(false);
         SetControls(false);
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(true);
 
-        SetDialogue(
-            "You approach a house emerging from the fog.\n" +
-            "The door opens halfway.\n\n");
+        // Scripted greeting: instant, and it keeps the AI from opening with the
+        // same "what candy do you want?" line every time.
+        conversationHistory.Add(new NPCDialogueAI.ChatMessage("assistant", currentGreeting));
+        SetDialogue(KnownFactsHeader());
+        UpdateStatus();
+        waitingForAI = true; // locked until the greeting has been typed out
+        OnAIResponse(currentGreeting, alreadyInHistory: true);
+    }
 
-        SetStatus(
-            "Encounter " + encounterNumber +
-            " | Questions: 0/" + maxQuestions);
-
-        RequestNPCResponse(
-            "Begin the encounter. Say something appropriate " +
-            "as the person answering the door. Do not explain " +
-            "your hidden identity or reveal your secret.");
+    private struct CaseFact
+    {
+        public string known;   // what the kid remembers (shown on screen)
+        public string truth;   // the resident's real fact
+        public string wrong;   // what an impostor believes instead
     }
 
     private void CreateCase()
     {
-        currentNPCName = NPCNames[
-            UnityEngine.Random.Range(0, NPCNames.Length)];
+        currentNPCName = NPCNames[UnityEngine.Random.Range(0, NPCNames.Length)];
 
         string[] houseDetails =
         {
@@ -278,69 +273,141 @@ public class NPCConversationTest : MonoBehaviour
             "a narrow house with muddy footprints on the steps",
             "a house with a wind chime moving despite the still air"
         };
+        currentHouseDetail = Pick(houseDetails);
 
-        currentHouseDetail = houseDetails[
-            UnityEngine.Random.Range(0, houseDetails.Length)];
+        List<CaseFact> pool = BuildFactPool(currentNPCName);
+        Shuffle(pool);
 
-        if (trueIdentity == NPCIdentity.Human)
-            CreateHumanCase();
-        else
-            CreateMonsterCase();
+        knownFacts.Clear();
+        sheetFacts.Clear();
+
+        // Two facts the kid remembers, plus one more for small talk.
+        int wrongIndex = trueIdentity == NPCIdentity.Monster ? UnityEngine.Random.Range(0, 2) : -1;
+        for (int i = 0; i < 3 && i < pool.Count; i++)
+        {
+            if (i < 2) knownFacts.Add(pool[i].known);
+            sheetFacts.Add(i == wrongIndex ? pool[i].wrong : pool[i].truth);
+        }
+        sheetFacts.Add("Your house has " + currentHouseDetail + ".");
+
+        currentQuirk = trueIdentity == NPCIdentity.Monster ? Pick(MonsterTells) : Pick(HumanRedHerrings);
+        currentGreeting = Pick(GetGreetings(currentPersona));
     }
 
-    private void CreateHumanCase()
+    private static List<CaseFact> BuildFactPool(string name)
     {
-        currentMotive =
-            "You want to protect your privacy and avoid being judged. " +
-            "You are not trying to kill the visitor.";
+        var facts = new List<CaseFact>();
 
-        currentSecret =
-            "Earlier tonight, you went outside even though you told " +
-            "your neighbours you had stayed home all evening.";
+        string[] petNames = { "Pumpkin", "Biscuit", "Mittens", "Rufus", "Pepper", "Ziggy" };
+        string pet = Pick(petNames), otherPet = PickOther(petNames, pet);
+        string animal = Pick(new[] { "cat", "dog" }), otherAnimal = animal == "cat" ? "dog" : "cat";
+        facts.Add(new CaseFact
+        {
+            known = name + " has a " + animal + " called " + pet + ".",
+            truth = "You have a " + animal + " called " + pet + ".",
+            wrong = "You have a " + otherAnimal + " called " + otherPet + "."
+        });
 
-        currentTruth =
-            "You are a real resident of this house. Earlier tonight, " +
-            "you went outside to meet someone and returned alone. " +
-            "You do not want to explain who you met.";
+        string[] kids = { "Lily", "Max", "Sofia", "Leo", "Nora", "Sam" };
+        string child = Pick(kids), otherChild = PickOther(kids, child);
+        facts.Add(new CaseFact
+        {
+            known = name + "'s kid " + child + " is in your class.",
+            truth = "Your child " + child + " is in the same class as the kid at your door.",
+            wrong = "Your only child is called " + otherChild + " and goes to a different school."
+        });
 
-        currentCoverStory =
-            "You claim that you stayed home all evening. If asked " +
-            "directly, you initially deny going outside. If the player " +
-            "presents a specific contradiction, admit a limited part " +
-            "of the truth but conceal whom you met.";
+        string[] costumes = { "a witch", "a scarecrow", "a pirate", "a vampire", "a mummy" };
+        string costume = Pick(costumes), otherCostume = PickOther(costumes, costume);
+        facts.Add(new CaseFact
+        {
+            known = "Last Halloween " + name + " dressed up as " + costume + ".",
+            truth = "Last Halloween you dressed up as " + costume + ".",
+            wrong = "Last Halloween you dressed up as " + otherCostume + "."
+        });
 
-        currentClue =
-            "Your account of staying home conflicts with the muddy " +
-            "shoes near the door. Nervousness alone proves nothing.";
+        string[] jobs = { "the bakery", "the hospital", "the library", "the hardware store", "the post office" };
+        string job = Pick(jobs), otherJob = PickOther(jobs, job);
+        facts.Add(new CaseFact
+        {
+            known = name + " works at " + job + " in town.",
+            truth = "You work at " + job + " in town.",
+            wrong = "You work at " + otherJob + " in town."
+        });
+
+        string[] treats = { "full-size chocolate bars", "caramel apples", "popcorn balls", "homemade cookies" };
+        string treat = Pick(treats), otherTreat = PickOther(treats, treat);
+        facts.Add(new CaseFact
+        {
+            known = name + " always gives out " + treat + ".",
+            truth = "Every year you give out " + treat + ".",
+            wrong = "Every year you give out " + otherTreat + "."
+        });
+
+        return facts;
     }
 
-    private void CreateMonsterCase()
+    // Subtle, creepy habits: only impostors have them.
+    private static readonly string[] MonsterTells =
     {
-        currentMotive =
-            "You are impersonating a resident. You want to learn " +
-            "whether someone else is inside and whether the visitor " +
-            "knows the real resident. Do not openly confess this.";
+        "You keep wanting the kid to come inside to warm up. Suggest it once, sweetly.",
+        "You are very hungry tonight. Mention it once, a little too intensely.",
+        "You don't remember the kid at all, but pretend you do.",
+        "The porch light bothers your eyes. Complain about it once.",
+        "You speak a bit too politely and formally, like someone copying how people talk."
+    };
 
-        currentSecret =
-            "You are not the real resident. You entered the house " +
-            "after the real resident disappeared. You know the basic " +
-            "layout but do not know the resident's private memories.";
+    // Innocent oddities: humans have them, so acting strange is not proof.
+    private static readonly string[] HumanRedHerrings =
+    {
+        "You burned dinner and you're grumpy about it.",
+        "You cut your hand carving pumpkins earlier and it stings.",
+        "You're exhausted after a long shift and want to go to bed.",
+        "Your power keeps flickering tonight and it's making you jumpy.",
+        "You're waiting for an important phone call and keep glancing back inside."
+    };
 
-        currentTruth =
-            "You are a monster pretending to be the resident. " +
-            "You know a few obvious facts about the house, but you " +
-            "do not know personal details that were never visible.";
+    private static string[] GetGreetings(NPCPersona persona)
+    {
+        switch (persona)
+        {
+            case NPCPersona.Friendly:
+                return new[] { "Oh, hello there! Happy Halloween. Great costume.", "Well hi! Happy Halloween, kiddo." };
+            case NPCPersona.Arrogant:
+                return new[] { "Trick or treat, I suppose. Make it quick.", "Another one. Happy Halloween. Go on." };
+            case NPCPersona.Defensive:
+                return new[] { "Yes? ...Oh. Trick-or-treating. Right.", "Who is it? Oh. It's Halloween. Of course." };
+            case NPCPersona.Charming:
+                return new[] { "Well, look at you! Best costume I've seen all night.", "Happy Halloween! Don't you look spooky." };
+            case NPCPersona.Nervous:
+                return new[] { "Oh! You startled me. Happy Halloween.", "Sorry, sorry, I didn't hear the bell at first. Happy Halloween." };
+            default:
+                return new[] { "Evening. Happy Halloween.", "Happy Halloween. Cold one tonight." };
+        }
+    }
 
-        currentCoverStory =
-            "You claim to be the resident. Give plausible, simple " +
-            "answers about the house. When asked about private memories, " +
-            "invent a vague answer, reinterpret the question, or ask " +
-            "what the visitor already knows. Vary your tactics.";
+    private static string Pick(string[] options) => options[UnityEngine.Random.Range(0, options.Length)];
 
-        currentClue =
-            "You may be vague about a personal memory or make a small " +
-            "inconsistency when asked for a specific detail. You can " +
-            "still sound warm, funny, patient, or convincing.";
+    private static string PickOther(string[] options, string not)
+    {
+        string choice;
+        do { choice = Pick(options); } while (choice == not && options.Length > 1);
+        return choice;
+    }
+
+    private static void Shuffle<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+
+    // Shown above every exchange so the kid can check answers against it.
+    private string KnownFactsHeader()
+    {
+        return "<i>What you remember: " + string.Join(" ", knownFacts) + "</i>\n\n";
     }
 
     private void ApplyAppearance()
@@ -380,144 +447,70 @@ public class NPCConversationTest : MonoBehaviour
         playerInput.text = "";
         questionsAsked++;
 
-        // Reset the visible dialogue for this exchange.
-        SetDialogue("You: " + question + "\n\n");
+        // Reset the visible dialogue for this exchange (the remembered facts stay on top).
+        SetDialogue(KnownFactsHeader() + "You: " + question + "\n\n");
 
         // Preserve history for the AI even though the UI is cleared.
-        conversationHistory.Add("VISITOR: " + question);
+        conversationHistory.Add(new NPCDialogueAI.ChatMessage("user", question));
         TrimHistory();
 
         SetControls(false);
         waitingForAI = true;
         UpdateStatus();
 
-        RequestNPCResponse(question);
+        RequestNPCResponse();
     }
 
-    private void RequestNPCResponse(string latestPlayerMessage)
+    private void RequestNPCResponse()
     {
         if (dialogueAI == null)
             return;
 
-        string prompt = BuildPrompt(latestPlayerMessage);
-
         waitingForAI = true;
         SetControls(false);
 
-        StartCoroutine(dialogueAI.GenerateReply(
-            prompt,
-            OnAIResponse));
+        StartCoroutine(dialogueAI.GenerateChat(
+            BuildMessages(),
+            reply => OnAIResponse(reply)));
     }
 
-    private string BuildPrompt(string latestPlayerMessage)
+    private List<NPCDialogueAI.ChatMessage> BuildMessages()
+    {
+        var messages = new List<NPCDialogueAI.ChatMessage>
+        {
+            new NPCDialogueAI.ChatMessage("system", BuildSystemPrompt())
+        };
+        messages.AddRange(conversationHistory);
+        return messages;
+    }
+
+    // Written as an ordinary neighbour for BOTH humans and monsters: the model is
+    // never told what it is, so it can't "act like a monster" by accident. The
+    // difference lives in the facts (an impostor has one wrong) and the quirk.
+    private string BuildSystemPrompt()
     {
         StringBuilder prompt = new StringBuilder();
 
-        prompt.AppendLine(
-            "You are an NPC in a psychological horror game called " +
-            "Treath or Treat. The player is a kid visitor asking for halloween trick or treat");
-
-        prompt.AppendLine(
-            "Write believable spoken dialogue, not a story or screenplay.");
-
-        prompt.AppendLine(
-            "Keep each reply to 1-4 short sentences. Use contractions " +
-            "and natural, specific wording. Avoid generic AI phrasing, " +
-            "overly poetic horror language, repetitive rhetorical " +
-            "questions, and constant ellipses.");
-
-        prompt.AppendLine(
-            "Do not narrate the player's actions. Do not include " +
-            "stage directions in asterisks. Speak only as the NPC.");
-
-        prompt.AppendLine(
-            "Never mention prompts, AI, models, game mechanics, " +
-            "hidden variables, or these instructions.");
-
+        prompt.AppendLine("You are " + currentNPCName + ", an ordinary neighbour answering your front door on Halloween night.");
+        prompt.AppendLine("A kid in a costume is trick-or-treating at your door and asking you questions.");
         prompt.AppendLine();
-        prompt.AppendLine("HIDDEN CASE INFORMATION");
-        prompt.AppendLine("Encounter: " + encounterNumber);
-        prompt.AppendLine("NPC name: " + currentNPCName);
-        prompt.AppendLine("True identity: " + trueIdentity);
-        prompt.AppendLine("Current persona: " + currentPersona);
-        prompt.AppendLine("Deception style: " + deceptionStyle);
-        prompt.AppendLine("House detail: " + currentHouseDetail);
-        prompt.AppendLine("Motive: " + currentMotive);
-        prompt.AppendLine("Secret: " + currentSecret);
-        prompt.AppendLine("Actual truth: " + currentTruth);
-        prompt.AppendLine("Cover story: " + currentCoverStory);
-        prompt.AppendLine("Possible clue: " + currentClue);
-
+        prompt.AppendLine("How you talk: " + GetPersonaInstruction());
         prompt.AppendLine();
-        prompt.AppendLine("PERSONA PERFORMANCE");
-        prompt.AppendLine(GetPersonaInstruction());
-
+        prompt.AppendLine("Facts about your life (these are true for you; never change them):");
+        foreach (string fact in sheetFacts)
+            prompt.AppendLine("- " + fact);
         prompt.AppendLine();
-        prompt.AppendLine("DECEPTION STRATEGY");
-        prompt.AppendLine(GetDeceptionInstruction());
-
+        prompt.AppendLine("Tonight: " + currentQuirk + " Bring it up at most once, naturally.");
         prompt.AppendLine();
-        prompt.AppendLine("IDENTITY-SPECIFIC RULES");
-
-        if (trueIdentity == NPCIdentity.Human)
-        {
-            prompt.AppendLine(
-                "You are human. Your secret is personal and " +
-                "self-protective. You may lie, omit details, get " +
-                "annoyed, or feel guilty, but you have ordinary human " +
-                "concerns. Do not act supernatural just to signal guilt. " +
-                "If confronted with convincing evidence, consider " +
-                "admitting part of the truth.");
-        }
-        else
-        {
-            prompt.AppendLine(
-                "You are a monster impersonating a human. You are " +
-                "deliberately concealing your identity. Your goal is " +
-                "to keep the visitor engaged and learn what they know. " +
-                "Do not confess or become obviously monstrous without " +
-                "a strong reason. You can sound completely ordinary. " +
-                "Your weak point is missing personal knowledge, not " +
-                "automatically sounding evil.");
-        }
-
-        prompt.AppendLine();
-        prompt.AppendLine("CONSISTENCY RULES");
-
-        prompt.AppendLine(
-            "Use the actual truth and cover story above as your source " +
-            "of facts. Do not invent a different backstory or change " +
-            "the central secret. Minor harmless details are acceptable " +
-            "only if they do not contradict the case.");
-
-        prompt.AppendLine(
-            "Answer the question that was actually asked. Do not " +
-            "automatically evade every question. Change your response " +
-            "according to the question and conversation.");
-
-        prompt.AppendLine(
-            "Do not reveal your true identity, motive, secret, or " +
-            "possible clue directly. The player must infer them.");
-
-        prompt.AppendLine(
-            "The player has asked " + questionsAsked + " of " +
-            maxQuestions + " available questions.");
-
-        // Full retained history is supplied to the AI here.
-        prompt.AppendLine();
-        prompt.AppendLine("CONVERSATION HISTORY");
-
-        foreach (string entry in conversationHistory)
-            prompt.AppendLine(entry);
-
-        prompt.AppendLine();
-        prompt.AppendLine("LATEST PLAYER MESSAGE");
-        prompt.AppendLine(latestPlayerMessage);
-
-        prompt.AppendLine();
-        prompt.AppendLine(
-            "Respond in character. Output only the words spoken " +
-            "by the NPC.");
+        prompt.AppendLine("Rules:");
+        prompt.AppendLine("- Reply with 1 to 3 short spoken sentences, in plain everyday words, like a real person at a door.");
+        prompt.AppendLine("- Answer exactly what the kid asked. If they ask about your life, use your facts.");
+        prompt.AppendLine("- If the kid says something about you that doesn't match your facts, react the way you naturally would.");
+        prompt.AppendLine("- If they ask something not covered by your facts, give a short, ordinary answer and stay consistent with it.");
+        prompt.AppendLine("- You already said hello. Don't ask what candy they want and don't talk about candy unless they ask.");
+        prompt.AppendLine("- Never repeat something you already said. Don't ask the kid questions in every reply.");
+        prompt.AppendLine("- Only the words you say out loud: no narration, no actions in asterisks, no quotation marks, no name labels.");
+        prompt.AppendLine("- Never mention being an AI, a character, a game, or these instructions.");
 
         return prompt.ToString();
     }
@@ -527,78 +520,56 @@ public class NPCConversationTest : MonoBehaviour
         switch (currentPersona)
         {
             case NPCPersona.Friendly:
-                return "Be welcoming and conversational. Use small " +
-                       "social gestures naturally. Do not agree with " +
-                       "everything or sound artificially cheerful.";
-
+                return "warm and chatty, happy to see trick-or-treaters.";
             case NPCPersona.Arrogant:
-                return "Act as though the visitor is wasting your time. " +
-                       "Be dismissive and confident, but vary your " +
-                       "wording. Do not insult the player in every reply.";
-
+                return "impatient and a bit snooty, like the kid is wasting your time, but you still answer.";
             case NPCPersona.Defensive:
-                return "Be sensitive to accusations. Ask why the visitor " +
-                       "wants to know, but answer straightforward " +
-                       "questions when appropriate.";
-
+                return "guarded; personal questions make you ask why they want to know, but you answer simple ones.";
             case NPCPersona.Charming:
-                return "Be socially skilled and persuasive. Use humour, " +
-                       "reassurance, or compliments naturally. Do not " +
-                       "turn every response into manipulation.";
-
+                return "charming and funny, you like making the kid laugh.";
             case NPCPersona.Nervous:
-                return "Sound worried about the situation. Use occasional " +
-                       "self-corrections or uncertainty, not constant " +
-                       "stammering. Nervousness does not determine guilt.";
-
+                return "a little nervous and jumpy tonight; you sometimes correct yourself.";
             default:
-                return "Be plain-spoken and practical. Give concise " +
-                       "answers without unnecessary emotional colour.";
+                return "plain and practical, short answers, no fuss.";
         }
     }
 
-    private string GetDeceptionInstruction()
-    {
-        switch (deceptionStyle)
-        {
-            case DeceptionStyle.Omission:
-                return "Prefer leaving out a relevant detail rather " +
-                       "than stating an outright falsehood. Answer " +
-                       "part of the question truthfully.";
-
-            case DeceptionStyle.DirectLie:
-                return "When the secret is threatened, you may deny " +
-                       "a relevant fact. Keep the lie consistent with " +
-                       "your cover story. Do not deny everything.";
-
-            case DeceptionStyle.MisleadingTruth:
-                return "Use technically true statements that could " +
-                       "give the visitor the wrong impression. Avoid " +
-                       "obvious word games.";
-
-            case DeceptionStyle.Deflection:
-                return "Sometimes redirect the conversation or ask " +
-                       "why the visitor wants to know. Still answer " +
-                       "some questions directly.";
-
-            default:
-                return "Sometimes appeal to sympathy, politeness, or " +
-                       "guilt to discourage further questions. Keep it " +
-                       "subtle and do not overuse emotional pressure.";
-        }
-    }
-
-    private void OnAIResponse(string response)
+    private void OnAIResponse(string response, bool alreadyInHistory = false)
     {
         waitingForAI = false;
+        response = CleanReply(response);
 
-        conversationHistory.Add("NPC: " + response);
-        TrimHistory();
+        if (!alreadyInHistory)
+        {
+            conversationHistory.Add(new NPCDialogueAI.ChatMessage("assistant", response));
+            TrimHistory();
+        }
 
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
         typingCoroutine = StartCoroutine(TypeDialogue(response));
+    }
+
+    // Small models add labels, quotes and stage directions: strip them and keep it short.
+    private string CleanReply(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return "...Sorry, what was that?";
+
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"\*[^*]*\*|\([^)]*\)|\[[^\]]*\]", " ");
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text, "^\\s*(" + System.Text.RegularExpressions.Regex.Escape(currentNPCName) + "|NPC|Neighbou?r|Me)\\s*:\\s*", "",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        text = text.Replace("\"", "").Replace("“", "").Replace("”", "").Trim();
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s+", " ");
+
+        // At most three sentences.
+        var sentences = System.Text.RegularExpressions.Regex.Matches(text, @"[^.!?]+[.!?]+");
+        if (sentences.Count > 3)
+            text = sentences[0].Value.Trim() + " " + sentences[1].Value.Trim() + " " + sentences[2].Value.Trim();
+
+        return string.IsNullOrWhiteSpace(text) ? "...Sorry, what was that?" : text;
     }
 
     private IEnumerator TypeDialogue(string response)
@@ -678,9 +649,9 @@ public class NPCConversationTest : MonoBehaviour
             candyLayer.UpdateCandyCount(candiesReceived);
         }
 
-        FinishDecision(
-             currentNPCName +
-            " gives you the candy and step away from the door.");
+        FinishDecision(trueIdentity == NPCIdentity.Human
+            ? currentNPCName + " gives you the candy and you step away from the door."
+            : "You hold out your bucket. " + currentNPCName + " smiles and reaches in.");
     }
 
     private void ChooseKill()
@@ -717,16 +688,15 @@ public class NPCConversationTest : MonoBehaviour
     {
         SetControls(false);
         SetDecisionButtons(false);
+        SetQuestionUIVisible(false); // the decision is made: only the result and Next Encounter remain
 
-        string identityResult =
-            trueIdentity == NPCIdentity.Human
-                ? "HUMAN"
-                : "MONSTER";
+        string identity = trueIdentity == NPCIdentity.Human ? "a human" : "a monster";
+        string reveal = currentNPCName + " was " + identity + ".";
+        if (!string.IsNullOrEmpty(OutcomeNote))
+            reveal += "\n" + OutcomeNote;
+        OutcomeNote = null;
 
-        SetDialogue(
-            result + "\n\n" +
-            "TEST REVEAL: " + identityResult
-        );
+        SetDialogue(result + "\n\n" + reveal);
 
         SetStatus("Encounter complete.");
 
@@ -752,6 +722,15 @@ public class NPCConversationTest : MonoBehaviour
             NextEncounterRequested.Invoke();
         else
             BeginEncounter();
+    }
+
+    // Question input, Send and the Candy/Kill buttons: only shown while the player is deciding.
+    private void SetQuestionUIVisible(bool visible)
+    {
+        if (playerInput != null) playerInput.gameObject.SetActive(visible);
+        if (sendButton != null) sendButton.gameObject.SetActive(visible);
+        if (candyButton != null) candyButton.gameObject.SetActive(visible);
+        if (killButton != null) killButton.gameObject.SetActive(visible);
     }
 
     private void SetControls(bool enabled)
@@ -787,10 +766,8 @@ public class NPCConversationTest : MonoBehaviour
     private void UpdateStatus()
     {
         SetStatus(
-            "Encounter " + encounterNumber +
-            " | Persona: " + currentPersona +
-            " | Questions: " + questionsAsked +
-            "/" + maxQuestions);
+            "Questions: " + questionsAsked + "/" + maxQuestions +
+            "  |  Ask about what you remember. A monster gets it wrong.");
     }
 
     private void SetStatus(string message)

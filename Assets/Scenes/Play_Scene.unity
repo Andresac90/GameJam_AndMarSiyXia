@@ -1645,7 +1645,7 @@ MonoBehaviour:
   statusText: {fileID: 876650657}
   npcRenderer: {fileID: 0}
   personaMaterials: []
-  maxQuestions: 2
+  maxQuestions: 3
   keepIdentityAcrossEncounters: 0
   maxHistoryEntries: 12
   charactersPerSecond: 35

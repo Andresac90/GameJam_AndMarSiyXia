@@ -107,3 +107,6 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Bundled desktop AI (llama.cpp + ~2 GB model). Fetch with: Trick or Threat > Download Local AI
+/LocalAI/

@@ -43,7 +43,9 @@ public class UIMainMenu : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        throw new NotImplementedException();
+        // Handle start button click
+        //Load scene name
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Play_Scene");
     }
 
     // Update is called once per frame

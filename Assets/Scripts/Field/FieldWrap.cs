@@ -10,6 +10,10 @@ public class FieldWrap : MonoBehaviour
 {
     public FieldBounds field;
 
+    [Tooltip("After wrapping, turn the player toward the field center, so walking off the edge " +
+             "feels like walking back into the same place instead of facing the empty void.")]
+    public bool faceCenterAfterWrap = true;
+
     CharacterController controller;
 
     void Awake()
@@ -25,6 +29,15 @@ public class FieldWrap : MonoBehaviour
         // A CharacterController overrides transform.position unless it is disabled during a teleport.
         controller.enabled = false;
         transform.position = field.GetOppositePoint(transform.position);
+
+        if (faceCenterAfterWrap)
+        {
+            Vector3 toCenter = field.Center - transform.position;
+            toCenter.y = 0f;
+            if (toCenter.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(toCenter); // yaw only; camera pitch is untouched
+        }
+
         controller.enabled = true;
     }
 }

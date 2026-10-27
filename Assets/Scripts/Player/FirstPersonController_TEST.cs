@@ -67,7 +67,7 @@ public class FirstPersonController_TEST : MonoBehaviour
     private void HandleMouseLook()
     {
         Mouse mouse = Mouse.current;
-        if (mouse == null)
+        if (mouse == null || !CursorLock.IsLocked) // WebGL: wait for the click that captures the mouse
             return;
 
         Vector2 delta = mouse.delta.ReadValue() * mouseSensitivity;
@@ -151,16 +151,26 @@ public class FirstPersonController_TEST : MonoBehaviour
 
     private void UpdateCursor()
     {
-        Cursor.lockState = controlsEnabled
-            ? CursorLockMode.Locked
-            : CursorLockMode.None;
+        CursorLock.Set(controlsEnabled);
+    }
 
-        Cursor.visible = !controlsEnabled;
+    private void OnGUI()
+    {
+        // WebGL only: the browser needs a click before it hands over the mouse.
+        if (!controlsEnabled || CursorLock.IsLocked)
+            return;
+
+        GUIStyle style = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = Mathf.RoundToInt(28 * Screen.height / 1080f),
+            fontStyle = FontStyle.Bold
+        };
+        GUI.Label(new Rect(0, Screen.height * 0.45f, Screen.width, 60), "Click to look around", style);
     }
 
     private void OnDisable()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorLock.Set(false);
     }
 }
