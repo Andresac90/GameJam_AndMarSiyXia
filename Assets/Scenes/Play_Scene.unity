@@ -685,17 +685,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameLoop
   candyToWin: 5
-  houseTime: 90
+  houseTime: 15
   firstHouseLit: 1
   pauseTimerDuringDialogue: 1
   warden: {fileID: 0}
   wardenSpawnDistance: 25
   sanctuaryRadius: 9
-  directionalLight: {fileID: 1451124782}
+  directionalLight: {fileID: 0}
   awakeLightColor: {r: 1, g: 0, b: 0, a: 1}
-  musicSource: {fileID: 637775240}
-  ambientMusic: {fileID: 8300000, guid: f279ede2974224aa5bb43693ee09d834, type: 3}
-  suspenseMusic: {fileID: 8300000, guid: b28fbbc2ac870418d9c222d5b69a7d49, type: 3}
+  musicSource: {fileID: 0}
+  ambientMusic: {fileID: 0}
+  suspenseMusic: {fileID: 0}
   conversation: {fileID: 0}
   spawner: {fileID: 0}
   player: {fileID: 0}
@@ -992,9 +992,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5932998560753241200, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6464361106923855022, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: moveSpeed
       value: 10.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.661491
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.661491
+      objectReference: {fileID: 0}
+    - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.661491
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1002,7 +1018,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7518208581478297774, guid: 9eae3180c04e10945851b56d89d8b08e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2077,7 +2093,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1188134793
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2166,7 +2182,7 @@ Transform:
   m_GameObject: {fileID: 1188134792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -20.098658, y: 0.49999997, z: 0}
+  m_LocalPosition: {x: -20.098658, y: -0.87, z: 0}
   m_LocalScale: {x: 25.79, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2365,7 +2381,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
-  m_Color: {r: 0.34117648, g: 0.54509807, b: 0.7490196, a: 1}
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

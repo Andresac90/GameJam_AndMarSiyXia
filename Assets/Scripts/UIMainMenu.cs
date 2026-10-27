@@ -26,13 +26,14 @@ public class UIMainMenu : MonoBehaviour
 
         (uiButtons["BtnStart"] as Button).onClick.AddListener(OnStartButtonClicked);
         (uiButtons["BtnSettings"] as Button).onClick.AddListener(OnSettingsButtonClicked);
-        (uiButtons["BtnQuit"] as Button).onClick.AddListener(OnQuitButtonClicked);
+        (uiButtons["BtnExit"] as Button).onClick.AddListener(OnQuitButtonClicked);
 
     }
 
     private void OnQuitButtonClicked()
     {
-        throw new NotImplementedException();
+        // Handle quit button click
+        Application.Quit();
     }
 
     private void OnSettingsButtonClicked()
