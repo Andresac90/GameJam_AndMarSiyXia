@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 103572489688271219}
   - component: {fileID: 2246095567676751139}
   - component: {fileID: 4924560995554775818}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -35,6 +35,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1797225729513310797}
   - {fileID: 6116657534982433736}
   - {fileID: 553115026862506238}
   m_Father: {fileID: 7518208581478297774}
@@ -78,7 +79,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 311
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -114,7 +115,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 4823437354655054689}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -297,7 +299,7 @@ GameObject:
   - component: {fileID: 6116657534982433736}
   - component: {fileID: 2655029269235821778}
   - component: {fileID: 7813618522235993227}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LeftHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -388,7 +390,7 @@ GameObject:
   - component: {fileID: 553115026862506238}
   - component: {fileID: 947226550337360755}
   - component: {fileID: 654988964237351122}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -468,6 +470,134 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7329739712767273851
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1797225729513310797}
+  - component: {fileID: 4823437354655054689}
+  - component: {fileID: 8531922059054767926}
+  m_Layer: 0
+  m_Name: FPSCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1797225729513310797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329739712767273851}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4004814684921759252}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &4823437354655054689
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329739712767273851}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 4
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.1
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 1728
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!114 &8531922059054767926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329739712767273851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 1
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &8826907481437878220
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,6 +827,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CandyCircle
       objectReference: {fileID: 0}
+    - target: {fileID: 180562765553295981, guid: 79ba6ac3b464c1e4cb5d3f775ec483a7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8993285037959623233, guid: 79ba6ac3b464c1e4cb5d3f775ec483a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.57
@@ -799,6 +933,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CandyCircle.001
       objectReference: {fileID: 0}
+    - target: {fileID: 3396082427373127028, guid: 41cfe2104aed9bd43b5febdc8285ad4c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -820,6 +958,10 @@ PrefabInstance:
     - target: {fileID: 839528043094242943, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328707194291165241, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2829130018944020946, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_LocalScale.x
@@ -877,6 +1019,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pistol
       objectReference: {fileID: 0}
+    - target: {fileID: 3173004121019853672, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836758637094504027, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4331296376695142984, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4844241543761076454, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -885,9 +1039,17 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5261868552085928646, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5436347672422134824, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054304041857636316, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6060907646101274439, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_CastShadows
@@ -896,6 +1058,10 @@ PrefabInstance:
     - target: {fileID: 6222994896843895284, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6350036135974491689, guid: 8eecb1bcb73491243ace14ffaef81e15, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -916,6 +1082,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6116657534982433736}
     m_Modifications:
+    - target: {fileID: 957286073711108550, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1586466296618479631, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -956,9 +1126,17 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.0038724
       objectReference: {fileID: 0}
+    - target: {fileID: 5138310938490325200, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7488278156313535498, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7748236363479784362, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8249856157008404795, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
       propertyPath: m_LocalScale.x
@@ -1016,6 +1194,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin Bucket
       objectReference: {fileID: 0}
+    - target: {fileID: 8734362984328887169, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8816674054942256489, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -1038,7 +1220,7 @@ PrefabInstance:
       addedObject: {fileID: 5932998560753241200}
     - targetCorrespondingSourceObject: {fileID: 8734362984328887169, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3535339620579569524}
+      addedObject: {fileID: 9069197137844135825}
   m_SourcePrefab: {fileID: 100100000, guid: d93a7e4194ff03f45804ed404ac70c4c, type: 3}
 --- !u!4 &119380307422673702 stripped
 Transform:
@@ -1115,7 +1297,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &3535339620579569524
+--- !u!114 &9069197137844135825
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1160,6 +1342,10 @@ PrefabInstance:
     - target: {fileID: 4352655703182246444, guid: 74af9d8ef194e1d478656412d4135269, type: 3}
       propertyPath: m_Name
       value: CandyCircle.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352655703182246444, guid: 74af9d8ef194e1d478656412d4135269, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8790243586464462405, guid: 74af9d8ef194e1d478656412d4135269, type: 3}
       propertyPath: m_LocalPosition.x
