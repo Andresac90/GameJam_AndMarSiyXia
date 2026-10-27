@@ -167,9 +167,13 @@ public class HouseLampposts : MonoBehaviour
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.shadowCastingMode = ShadowCastingMode.Off;
         renderer.receiveShadows = false;
-        renderer.maxParticleSize = 2f;
+        renderer.maxParticleSize = 0.35f;
 
         Material mat = glowMaterial != null ? new Material(glowMaterial) : CreateGlowFallback();
+        // Fade the glow out as the camera walks up to the lamp, so it never floods the screen.
+        mat.EnableKeyword("_FADING_ON");
+        mat.SetFloat("_CameraFadingEnabled", 1f);
+        mat.SetVector("_CameraFadeParams", new Vector4(1f, 1f / 3f, 0f, 0f));
         Texture2D texture = GetGlowTexture();
         mat.SetTexture("_BaseMap", texture);
         mat.SetTexture("_MainTex", texture);
