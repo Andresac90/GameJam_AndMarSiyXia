@@ -79,7 +79,7 @@ public class NightAtmosphere : MonoBehaviour
             moonLight.transform.rotation = Quaternion.Euler(moonRotation);
         }
 
-        RenderSettings.skybox = null;
+        //RenderSettings.skybox = null; //added a dedicated skybox
         RenderSettings.ambientMode = AmbientMode.Trilight;
         RenderSettings.ambientSkyColor = skyAmbient;
         RenderSettings.ambientEquatorColor = equatorAmbient;
@@ -98,14 +98,15 @@ public class NightAtmosphere : MonoBehaviour
     {
         if (cam == null) return;
 
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = fogColor;
+        cam.clearFlags = CameraClearFlags.Skybox;
 
-        UniversalAdditionalCameraData data = cam.GetUniversalAdditionalCameraData();
+        UniversalAdditionalCameraData data =
+            cam.GetUniversalAdditionalCameraData();
+
         if (data != null)
         {
             data.renderPostProcessing = spookyGrade;
-            data.requiresDepthTexture = true; // soft fog particles need scene depth
+            data.requiresDepthTexture = true;
         }
     }
 
