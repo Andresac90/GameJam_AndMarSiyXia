@@ -1069,6 +1069,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldWrap
   field: {fileID: 1178315831}
+  fadeInDuration: 1
+  blackDuration: 0.5
+  fadeOutDuration: 0.2
+  fadeOpacity: 1
+  teleportSound: {fileID: 8300000, guid: 485e078f14d57ce4b837d985678058d2, type: 3}
+  teleportSoundVolume: 1
 --- !u!114 &857733392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1615,6 +1621,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCConversationTest
   startEncounterOnPlay: 0
+  basketAnimator: {fileID: 0}
+  candyLayer: {fileID: 0}
+  gettingCandyTrigger: GettingCandy
   dialogueAI: {fileID: 0}
   dialoguePanel: {fileID: 1627066908}
   dialogueText: {fileID: 711309953}
