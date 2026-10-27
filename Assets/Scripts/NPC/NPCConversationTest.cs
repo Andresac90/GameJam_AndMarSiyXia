@@ -16,6 +16,7 @@ public class NPCConversationTest : MonoBehaviour
     [SerializeField] private bool startEncounterOnPlay = true;
 
     public bool EncounterFinished => decisionMade;
+    public bool CurrentNPCIsMonster => trueIdentity == NPCIdentity.Monster;
 
     private enum NPCIdentity
     {
