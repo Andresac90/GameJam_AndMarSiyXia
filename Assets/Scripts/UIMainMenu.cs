@@ -11,7 +11,7 @@ public class UIMainMenu : MonoBehaviour
 
     void Start()
     {
-        Button[] buttons = GetComponentsInChildren<Button>();
+        Button[] buttons = GetComponentsInChildren<Button>(true);
         foreach (Button button in buttons)
         {
             if (!uiButtons.ContainsKey(button.name))
