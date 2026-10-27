@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 2063563530234519120}
   - component: {fileID: 3639254385797973808}
   - component: {fileID: 1648430372994895074}
-  - component: {fileID: 8700272298654672751}
+  - component: {fileID: 4957382722307069680}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -475,14 +475,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353322195139232236}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.76153904, z: 0, w: 0.64811915}
+  m_LocalRotation: {x: 0, y: -0.76153827, z: 0, w: 0.64812}
   m_LocalPosition: {x: -1.0695317, y: 1.5183411, z: -5.6498256}
   m_LocalScale: {x: 1.4182, y: 2.2583416, z: 1.4182}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1937451095101843821}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -99.2, z: 0}
 --- !u!33 &7189084819401035128
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -588,7 +588,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8700272298654672751
+--- !u!114 &4957382722307069680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -597,13 +597,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1353322195139232236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10eb82f05b3c94e90813a04922405b8f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a961e1e70e304a409181176bfc02841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController_TEST
-  cameraTransform: {fileID: 1937451095101843821}
+  cameraTransform: {fileID: 0}
   moveSpeed: 4
-  mouseSensitivity: 2
+  mouseSensitivity: 1
   gravity: -20
+  minPitch: -80
+  maxPitch: 80
 --- !u!1 &1381503031544191336
 GameObject:
   m_ObjectHideFlags: 0
@@ -2465,6 +2467,7 @@ GameObject:
   - component: {fileID: 1076164119921552884}
   - component: {fileID: 3800345078915541389}
   - component: {fileID: 2368186714783722215}
+  - component: {fileID: 3060694633188949086}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2591,6 +2594,32 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &3060694633188949086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6285789737933794863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a3a9f88928446e0bf5abdff1c8ab49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGun
+  aimCamera: {fileID: 1076164119921552884}
+  player: {fileID: 0}
+  muzzle: {fileID: 0}
+  muzzleFlash: {fileID: 0}
+  audioSource: {fileID: 0}
+  gunshotClip: {fileID: 0}
+  range: 60
+  damage: 100
+  fireCooldown: 0.35
+  recoilDegrees: 2
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  showCrosshair: 1
 --- !u!1 &6304051361485363908
 GameObject:
   m_ObjectHideFlags: 0

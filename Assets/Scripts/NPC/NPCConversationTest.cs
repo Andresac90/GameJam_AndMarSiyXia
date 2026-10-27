@@ -9,6 +9,15 @@ using UnityEngine.UI;
 
 public class NPCConversationTest : MonoBehaviour
 {
+    public event Action KillChosen;
+    public event Action NextEncounterRequested;
+    public event Action CandyChosen;
+
+    [Header("Encounter Integration")]
+    [SerializeField] private bool startEncounterOnPlay = true;
+
+    public bool EncounterFinished => decisionMade;
+
     private enum NPCIdentity
     {
         Human,
@@ -148,7 +157,43 @@ public class NPCConversationTest : MonoBehaviour
             identityInitialized = true;
         }
 
+        if (startEncounterOnPlay)
+            BeginEncounter();
+        else
+        {
+            if (dialoguePanel != null)
+                dialoguePanel.SetActive(false);
+            SetControls(false);
+            SetDecisionButtons(false);
+            SetStatus("Waiting for the player to knock.");
+        }
+    }
+
+    /// <summary>Starts a dialogue encounter. Called by DoorEncounter after a knock.</summary>
+    public void BeginEncounter()
+    {
+        if (dialogueAI == null)
+        {
+            SetDialogue("ERROR: NPCDialogueAI is missing.");
+            SetStatus("AI component missing");
+            return;
+        }
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
+
         StartEncounter();
+    }
+
+    /// <summary>Shows the reveal after the player actually shot the NPC.</summary>
+    public void ShowKillResult()
+    {
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
+
+        FinishDecision(
+            "You put " + currentNPCName + " down on their own porch. " +
+            "What's left of them is dripping off the door frame.");
     }
 
     private void StartEncounter()
@@ -357,7 +402,7 @@ public class NPCConversationTest : MonoBehaviour
 
         prompt.AppendLine(
             "You are an NPC in a psychological horror game called " +
-            "Trick or Threat.");
+            "Treath or Treat. The player is a kid visitor asking for halloween trick or treat");
 
         prompt.AppendLine(
             "Write believable spoken dialogue, not a story or screenplay.");
@@ -605,6 +650,7 @@ public class NPCConversationTest : MonoBehaviour
         }
 
         decisionMade = true;
+        CandyChosen?.Invoke();
         timesSpared++;
         candiesReceived++;
 
@@ -624,9 +670,22 @@ public class NPCConversationTest : MonoBehaviour
         decisionMade = true;
         timesKilled++;
 
-        FinishDecision(
-            "You attack " + currentNPCName +
-            " before the door can close.");
+        if (KillChosen == null)
+        {
+            FinishDecision(
+                "You attack " + currentNPCName +
+                " before the door can close.");
+            return;
+        }
+
+        // Hand control to the player: they have to pull the trigger themselves.
+        SetControls(false);
+        SetDecisionButtons(false);
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+
+        KillChosen.Invoke();
     }
 
     
@@ -652,9 +711,23 @@ public class NPCConversationTest : MonoBehaviour
     }
 
 
+    /// <summary>Hides the result panel until the player knocks on the next door.</summary>
+    public void WaitForNextKnock()
+    {
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+        if (nextEncounterButton != null)
+            nextEncounterButton.gameObject.SetActive(false);
+        SetControls(false);
+        SetDecisionButtons(false);
+    }
+
     private void StartNextEncounter()
     {
-        StartEncounter();
+        if (NextEncounterRequested != null)
+            NextEncounterRequested.Invoke();
+        else
+            BeginEncounter();
     }
 
     private void SetControls(bool enabled)
