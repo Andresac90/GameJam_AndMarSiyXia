@@ -20,6 +20,7 @@ public class NPCConversationTest : MonoBehaviour
     [SerializeField] private string gettingCandyTrigger = "GettingCandy";
 
     public bool EncounterFinished => decisionMade;
+    public bool CurrentNPCIsMonster => trueIdentity == NPCIdentity.Monster;
 
     private enum NPCIdentity
     {

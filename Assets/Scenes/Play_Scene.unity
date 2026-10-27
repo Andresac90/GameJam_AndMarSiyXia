@@ -430,6 +430,8 @@ GameObject:
   - component: {fileID: 637775238}
   - component: {fileID: 637775239}
   - component: {fileID: 637775240}
+  - component: {fileID: 637775241}
+  - component: {fileID: 637775242}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -437,6 +439,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &637775241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c42c514b9a9445f8beff9822603a507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PSXRetroLook
+  psxTemplate: {fileID: 2100000, guid: 34ff1d433f28415ebb137f0a917e8130, type: 2}
+--- !u!114 &637775242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f94d1c3b7404fef80ebfeda83378328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameLoop
+  candyToWin: 5
+  houseTime: 90
 --- !u!4 &637775235
 Transform:
   m_ObjectHideFlags: 0
