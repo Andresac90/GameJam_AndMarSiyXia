@@ -3,8 +3,8 @@ using UnityEngine;
 public class CandyLayer : MonoBehaviour
 {
     public Transform candyLayer;
-    public int candiesPerLayer = 20;
-    public float heightPerLayer = 0.1f;
+    public int candiesPerLayer = 1;
+    public float heightPerLayer = 0.10f;
 
     private Vector3 startPosition;
 

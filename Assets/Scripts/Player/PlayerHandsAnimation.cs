@@ -1,28 +1,45 @@
+
 using UnityEngine;
 
-/// <summary>
-/// Drives the first-person hands (PlayerKid.controller):
-/// the Walk cycle only advances while the player moves, and
-/// GettingCandy is played as a pose when candy is given.
-/// </summary>
 [RequireComponent(typeof(Animator))]
 public class PlayerHandsAnimation : MonoBehaviour
 {
+    [Header("Animation States")]
     [SerializeField] private string walkState = "Walk";
-    [SerializeField] private string candyState = "GettingCandy";
+
+    [SerializeField]
+    private string[] candyStates =
+    {
+        "GettingCandy",
+        "GettingCandy1",
+        "GettingCandy 2",
+        "GettingCandy3"
+    };
+
+    [SerializeField]
+    private string[] carryStates =
+    {
+        "Walk Candy1",
+        "Walk Candy2",
+        "WalkCandy3"
+    };
+
     [SerializeField, Min(0f)] private float moveThreshold = 0.1f;
     [SerializeField, Min(0.1f)] private float blendSpeed = 4f;
-    [SerializeField, Min(0f)] private float crossFade = 0.15f;
+    [SerializeField, Min(0f)] private float crossFade = 0.1f;
 
     private Animator animator;
     private CharacterController controller;
     private FirstPersonController_TEST player;
+
     private bool posing;
+    private int candyCount;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         animator.applyRootMotion = false;
+
         controller = GetComponent<CharacterController>();
         player = GetComponent<FirstPersonController_TEST>();
     }
@@ -45,14 +62,49 @@ public class PlayerHandsAnimation : MonoBehaviour
         }
 
         float target = canMove && speed > moveThreshold ? 1f : 0f;
-        animator.speed = Mathf.MoveTowards(animator.speed, target, Time.deltaTime * blendSpeed);
+
+        animator.speed = Mathf.MoveTowards(
+            animator.speed,
+            target,
+            Time.deltaTime * blendSpeed);
     }
 
     public void PlayCandyPose()
     {
+        if (candyStates.Length == 0)
+            return;
+
         posing = true;
         animator.speed = 1f;
-        animator.CrossFade(candyState, crossFade);
+
+        int index = Mathf.Min(candyCount, candyStates.Length - 1);
+
+        animator.CrossFade(candyStates[index], crossFade, 0, 0f);
+    }
+
+    public void FinishCandyPose()
+    {
+        if (candyStates.Length == 0)
+            return;
+
+        int index = Mathf.Min(candyCount, candyStates.Length - 1);
+
+        if (index < carryStates.Length)
+        {
+            animator.CrossFade(carryStates[index], crossFade);
+        }
+        else
+        {
+            animator.CrossFade(candyStates[index], crossFade);
+        }
+
+        posing = false;
+    }
+
+    public void AddCandy()
+    {
+        PlayCandyPose();
+        candyCount = Mathf.Min(candyCount + 1, candyStates.Length - 1);
     }
 
     public void PlayWalk()
