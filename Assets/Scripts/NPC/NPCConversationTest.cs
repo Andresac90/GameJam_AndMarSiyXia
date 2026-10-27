@@ -407,7 +407,7 @@ public class NPCConversationTest : MonoBehaviour
     // Shown above every exchange so the kid can check answers against it.
     private string KnownFactsHeader()
     {
-        return "<i>What you remember: " + string.Join(" ", knownFacts) + "</i>\n\n";
+        return "<size=85%><color=#E8D2A8><i>What you remember: " + string.Join(" ", knownFacts) + "</i></color></size>\n\n";
     }
 
     private void ApplyAppearance()
@@ -704,6 +704,19 @@ public class NPCConversationTest : MonoBehaviour
             nextEncounterButton.gameObject.SetActive(true);
     }
 
+
+    /// <summary>
+    /// Game over: hide the dialogue but keep its Canvas active, because the end-result
+    /// panel lives on the same Canvas.
+    /// </summary>
+    public void HideDialogueForEndScreen()
+    {
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
+        if (dialogueText != null) dialogueText.gameObject.SetActive(false);
+        if (statusText != null) statusText.gameObject.SetActive(false);
+        if (nextEncounterButton != null) nextEncounterButton.gameObject.SetActive(false);
+        SetQuestionUIVisible(false);
+    }
 
     /// <summary>Hides the result panel until the player knocks on the next door.</summary>
     public void WaitForNextKnock()

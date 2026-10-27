@@ -60,6 +60,8 @@ public class GameLoop : MonoBehaviour
     private string message;
     private float messageUntil;
     private float flashUntil;
+    private bool endScreenShown;
+    private UIEndResult endResultUI; // Xiaowei's result panel; GameLoop's own end screen is the fallback
     private Transform currentDoor;
     private bool inEncounter;
     private bool sanctuaryWarned;
@@ -92,6 +94,7 @@ public class GameLoop : MonoBehaviour
             originalLightColorCaptured = true;
         }
         if (player != null) hands = player.GetComponent<PlayerHandsAnimation>();
+        endResultUI = FindAnyObjectByType<UIEndResult>(FindObjectsInactive.Include);
 
         TimeLeft = houseTime;
         beaconPending = firstHouseLit;
@@ -353,11 +356,18 @@ public class GameLoop : MonoBehaviour
         yield return new WaitForSeconds(1.6f);
         EndGame();
         onLose?.Invoke();
+        EventBus.Instance.EventTrigger("EndResult"); // result panel for losing too, not only winning
     }
 
     private void EndGame()
     {
-        if (conversation != null) conversation.WaitForNextKnock();
+        // The result panel lives on the dialogue Canvas: keep the Canvas, hide only the dialogue.
+        if (conversation != null)
+        {
+            if (endResultUI != null) conversation.HideDialogueForEndScreen();
+            else conversation.WaitForNextKnock();
+        }
+        endScreenShown = true;
         if (warden != null && won) warden.Freeze();
         if (player != null) player.SetControlsEnabled(false);
     }
@@ -404,9 +414,10 @@ public class GameLoop : MonoBehaviour
             GUI.color = Color.white;
         }
 
-        if (ended && EndScreenReady())
+        if (ended && (endScreenShown || EndScreenReady()))
         {
-            DrawEndScreen(scale);
+            if (endResultUI != null) DrawEndTitle(scale); // title above Xiaowei's result panel
+            else DrawEndScreen(scale);
             return;
         }
 
@@ -446,6 +457,13 @@ public class GameLoop : MonoBehaviour
     }
 
     private bool EndScreenReady() => won ? Time.time > messageUntil - 2f : Time.time > flashUntil + 0.9f;
+
+    private void DrawEndTitle(float scale)
+    {
+        string title = won ? "YOU SURVIVED THE NIGHT" : "THE WARDEN CAUGHT YOU";
+        GUIStyle titleStyle = Style(Mathf.RoundToInt(64 * scale), TextAnchor.MiddleCenter, won ? new Color(1f, 0.6f, 0.15f) : Color.red);
+        Shadowed(new Rect(0, Screen.height * 0.02f, Screen.width, Screen.height * 0.08f), title, titleStyle);
+    }
 
     private void DrawEndScreen(float scale)
     {

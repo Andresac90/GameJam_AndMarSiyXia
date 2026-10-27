@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor; // editor-only: a plain 'using UnityEditor' breaks every build
+#endif
 
 public class UIMainMenu : MonoBehaviour
 {
     private Dictionary<string, UIBehaviour> uiElements = new Dictionary<string, UIBehaviour>();
     [SerializeField] private GameObject panelMenu;
     [SerializeField] private GameObject panelNews;
+    [SerializeField] private string playSceneName = "Play_Scene";
 
     void Start()
     {
@@ -46,7 +49,7 @@ public class UIMainMenu : MonoBehaviour
     private void OnContinueButtonClicked()
     {
         panelNews.SetActive(false);
-        // To Do: load next scene
+        SceneManager.LoadScene(playSceneName); // newspaper read: start the night
     }
 
     private void OnQuitButtonClicked()
