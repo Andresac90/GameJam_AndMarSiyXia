@@ -31,6 +31,15 @@ public class GameLoop : MonoBehaviour
     [Tooltip("Being this close to the current house's door counts as being at the house (safe from the Warden).")]
     [SerializeField, Min(1f)] private float sanctuaryRadius = 9f;
 
+    [Header("Warden Atmosphere")]
+    [Tooltip("Assign the scene's Directional Light. If empty, the first directional light is found automatically.")]
+    [SerializeField] private Light directionalLight;
+    [SerializeField] private Color awakeLightColor = Color.red;
+    [Tooltip("Assign the AudioSource used for background music (for example, the one on this GameObject).")]
+    [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioClip ambientMusic;
+    [SerializeField] private AudioClip suspenseMusic;
+
     [Header("References (auto-found if empty)")]
     [SerializeField] private NPCConversationTest conversation;
     [SerializeField] private HouseSpawner spawner;
@@ -59,6 +68,8 @@ public class GameLoop : MonoBehaviour
     private Transform currentDoor;
     private bool inEncounter;
     private bool sanctuaryWarned;
+    private Color originalLightColor;
+    private bool originalLightColorCaptured;
     private PlayerHandsAnimation hands;
 
     private void Awake()
@@ -67,6 +78,24 @@ public class GameLoop : MonoBehaviour
         if (spawner == null) spawner = FindAnyObjectByType<HouseSpawner>();
         if (player == null) player = FindAnyObjectByType<FirstPersonController_TEST>();
         if (field == null) field = FindAnyObjectByType<FieldBounds>();
+        if (musicSource == null) musicSource = GetComponent<AudioSource>();
+        if (directionalLight == null)
+        {
+            Light[] lights = FindObjectsByType<Light>(FindObjectsInactive.Exclude);
+            foreach (Light sceneLight in lights)
+            {
+                if (sceneLight.type == LightType.Directional)
+                {
+                    directionalLight = sceneLight;
+                    break;
+                }
+            }
+        }
+        if (directionalLight != null)
+        {
+            originalLightColor = directionalLight.color;
+            originalLightColorCaptured = true;
+        }
         if (player != null) hands = player.GetComponent<PlayerHandsAnimation>();
 
         TimeLeft = houseTime;
@@ -93,6 +122,12 @@ public class GameLoop : MonoBehaviour
             conversation.NextEncounterRequested -= OnLeftHouse;
         }
         if (spawner != null) spawner.HouseSpawned -= OnHouseSpawned;
+        if (warden != null)
+        {
+            warden.CaughtPlayer -= OnCaught;
+            warden.Woke -= OnWardenWoke;
+            warden.Froze -= OnWardenFroze;
+        }
     }
 
     private void Start()
@@ -102,7 +137,13 @@ public class GameLoop : MonoBehaviour
         {
             warden.Freeze();
             warden.CaughtPlayer += OnCaught;
+            warden.Woke += OnWardenWoke;
+            warden.Froze += OnWardenFroze;
         }
+
+        // Start the game with the normal ambient track and the scene's original light color.
+        RestoreWardenAtmosphere();
+        PlayMusic(ambientMusic);
 
         onCandyChanged?.Invoke(Candy);
         Show($"Trick or treat. Bring home {candyToWin} candy... and don't wake the Warden.", 6f);
@@ -122,6 +163,35 @@ public class GameLoop : MonoBehaviour
         TimeLeft -= Time.deltaTime;
         if (TimeLeft <= 0f)
             ExpireTimer("Time's up. The Warden wakes.");
+    }
+
+    private void OnWardenWoke()
+    {
+        if (directionalLight != null) directionalLight.color = awakeLightColor;
+        PlayMusic(suspenseMusic);
+    }
+
+    private void OnWardenFroze()
+    {
+        RestoreWardenAtmosphere();
+        PlayMusic(ambientMusic);
+    }
+
+    private void RestoreWardenAtmosphere()
+    {
+        if (directionalLight != null && originalLightColorCaptured)
+            directionalLight.color = originalLightColor;
+    }
+
+    private void PlayMusic(AudioClip clip)
+    {
+        if (musicSource == null || clip == null) return;
+        if (musicSource.clip == clip && musicSource.isPlaying) return;
+
+        musicSource.Stop();
+        musicSource.clip = clip;
+        musicSource.loop = true;
+        musicSource.Play();
     }
 
     // ------------------------------------------------------------------ rules
