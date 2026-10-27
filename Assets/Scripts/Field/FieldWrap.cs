@@ -21,6 +21,11 @@ public class FieldWrap : MonoBehaviour
     [Range(0f, 1f)]
     public float fadeOpacity = 0.95f;
 
+    [Header("Teleport Facing")]
+    [Tooltip("After wrapping, turn the player toward the field center, so walking off the edge " +
+             "feels like walking back into the same place instead of facing the empty void.")]
+    public bool faceCenterAfterWrap = true;
+
     [Header("Teleport Sound")]
     [SerializeField] private AudioClip teleportSound;
     [SerializeField, Range(0f, 1f)] private float teleportSoundVolume = 1f;
@@ -96,6 +101,14 @@ public class FieldWrap : MonoBehaviour
         yield return Fade(0f, fadeOpacity, fadeInDuration);
 
         transform.position = destination;
+
+        if (faceCenterAfterWrap)
+        {
+            Vector3 toCenter = field.Center - destination;
+            toCenter.y = 0f;
+            if (toCenter.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(toCenter); // yaw only; camera pitch is untouched
+        }
 
         if (blackDuration > 0f)
             yield return new WaitForSecondsRealtime(blackDuration);

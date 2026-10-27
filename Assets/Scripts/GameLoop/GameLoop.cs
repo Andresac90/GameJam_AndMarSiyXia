@@ -212,17 +212,17 @@ public class GameLoop : MonoBehaviour
                 return;
             }
 
-            Show("They were human. +1 candy. The Warden freezes where he stands.");
+            Note("+1 candy. The Warden rests.");
         }
         else if (Candy <= 0)
         {
             if (warden != null) warden.Wake();
-            Show("You had nothing to steal... the Warden stirs.");
+            Note("You had nothing to steal... the Warden wakes and will chase you.");
         }
         else
         {
             SetCandy(Candy - 1);
-            Show("The monster stole a candy!");
+            Note("It stole a candy! " + WardenStatus());
         }
     }
 
@@ -235,11 +235,12 @@ public class GameLoop : MonoBehaviour
             beaconPending = true;
             // === MODIFIED: increment monster kill count and broadcast it. ===
             SetMonsterKills(MonsterKills + 1);
-            Show("It was a monster. The next house lights up.");
+            Note("The next house lights up. " + WardenStatus());
         }
         else
         {
-            ExpireTimer("That was a person. The Warden wakes and comes for you.");
+            ExpireTimer(null);
+            Note("The Warden wakes. It will chase you.");
         }
     }
 
@@ -248,8 +249,17 @@ public class GameLoop : MonoBehaviour
         TimeLeft = 0f;
         timerExpired = true;
         if (warden != null) warden.Wake();
-        Show(text);
+        if (text != null) Show(text);
     }
+
+    // Outcome line shown on the conversation's result screen.
+    private void Note(string text)
+    {
+        if (conversation != null) conversation.OutcomeNote = text;
+    }
+
+    private string WardenStatus() =>
+        warden != null && warden.IsAwake ? "The Warden is still hunting you." : "The Warden rests.";
 
     private void SetCandy(int value)
     {
@@ -403,6 +413,10 @@ public class GameLoop : MonoBehaviour
         // Candy counter.
         GUIStyle candyStyle = Style(Mathf.RoundToInt(34 * scale), TextAnchor.UpperLeft, new Color(1f, 0.6f, 0.15f));
         Shadowed(new Rect(30 * scale, 24 * scale, 600 * scale, 60 * scale), $"CANDY  {Candy} / {candyToWin}", candyStyle);
+
+        // While talking at the door the dialogue panel has the screen: no timer, no toasts.
+        if (player != null && !player.ControlsEnabled)
+            return;
 
         // Timer or Warden warning.
         bool wardenAwake = warden != null && warden.IsAwake;
