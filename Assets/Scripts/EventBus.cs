@@ -79,7 +79,7 @@ public class EventBus : BaseManager<EventBus>
         }
         else
         {
-            eventDictionary.Add(eventName, null);
+            eventDictionary.Add(eventName, new EventInfo());
             (eventDictionary[eventName] as EventInfo).actions += func;
         }
     }
