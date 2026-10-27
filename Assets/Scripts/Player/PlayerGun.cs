@@ -135,7 +135,14 @@ public class PlayerGun : MonoBehaviour
         // Gibs live on Ignore Raycast, so they never block bullets.
         int mask = hitMask & ~(1 << IgnoreRaycastLayer);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, range, mask, QueryTriggerInteraction.Ignore))
+        bool hitSomething = Physics.Raycast(ray, out RaycastHit hit, range, mask, QueryTriggerInteraction.Ignore);
+
+        // Muzzle blast and the bullet's path punch through the fog.
+        Vector3 bulletEnd = hitSomething ? hit.point : ray.GetPoint(Mathf.Min(range, 30f));
+        VolumetricFog.Disturb(ray.GetPoint(1f), ray.direction, 2f, 3f);
+        VolumetricFog.DisturbLine(ray.origin, bulletEnd, 0.9f, 2.5f);
+
+        if (!hitSomething)
             return;
 
         NPCHealth health = hit.collider.GetComponentInParent<NPCHealth>();

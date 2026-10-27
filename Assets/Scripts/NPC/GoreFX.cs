@@ -184,6 +184,7 @@ public class GoreFX : MonoBehaviour
         SpawnBloodPool(new Vector3(center.x, body.min.y, center.z));
 
         AudioSource.PlayClipAtPoint(burstClip != null ? burstClip : ProceduralAudio.Burst, center, 1f);
+        VolumetricFog.Disturb(center, Vector3.up, 4.5f, 6f);
         SplatterScreenNear(center, 1.5f);
     }
 
