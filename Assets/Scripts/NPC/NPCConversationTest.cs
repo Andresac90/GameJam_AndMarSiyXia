@@ -402,7 +402,7 @@ public class NPCConversationTest : MonoBehaviour
 
         prompt.AppendLine(
             "You are an NPC in a psychological horror game called " +
-            "Trick or Threat.");
+            "Treath or Treat. The player is a kid visitor asking for halloween trick or treat");
 
         prompt.AppendLine(
             "Write believable spoken dialogue, not a story or screenplay.");
