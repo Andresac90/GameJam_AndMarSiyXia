@@ -70,6 +70,7 @@ public class GameLoop : MonoBehaviour
     private bool sanctuaryWarned;
     private Color originalLightColor;
     private bool originalLightColorCaptured;
+    private PlayerHandsAnimation hands;
 
     private void Awake()
     {
@@ -95,6 +96,7 @@ public class GameLoop : MonoBehaviour
             originalLightColor = directionalLight.color;
             originalLightColorCaptured = true;
         }
+        if (player != null) hands = player.GetComponent<PlayerHandsAnimation>();
 
         TimeLeft = houseTime;
         beaconPending = firstHouseLit;
@@ -251,6 +253,7 @@ public class GameLoop : MonoBehaviour
     private void SetCandy(int value)
     {
         Candy = Mathf.Max(0, value);
+        if (hands != null) hands.SetCandyCount(Candy); // bucket fills/empties with the count
         onCandyChanged?.Invoke(Candy);
     }
 
