@@ -685,7 +685,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameLoop
   candyToWin: 5
-  houseTime: 90
+  houseTime: 15
   firstHouseLit: 1
   pauseTimerDuringDialogue: 1
   warden: {fileID: 0}
@@ -1615,6 +1615,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCConversationTest
   startEncounterOnPlay: 0
+  basketAnimator: {fileID: 0}
+  candyLayer: {fileID: 0}
+  gettingCandyTrigger: GettingCandy
   dialogueAI: {fileID: 0}
   dialoguePanel: {fileID: 1627066908}
   dialogueText: {fileID: 711309953}

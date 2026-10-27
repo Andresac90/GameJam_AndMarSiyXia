@@ -50,7 +50,7 @@ public class NPCHealth : MonoBehaviour
         if (dead) return;
         dead = true;
 
-        if (animator != null && animator.isActiveAndEnabled)
+        if (animator != null && animator.isActiveAndEnabled && HasParameter(animator, "Die"))
             animator.SetTrigger("Die");
 
         // Measure the body before hiding it; disabled renderers report empty bounds.
@@ -80,6 +80,13 @@ public class NPCHealth : MonoBehaviour
             if (child != transform && (child.name == "BloodDecal" || child.name == "BloodSpray"))
                 Destroy(child.gameObject);
         }
+    }
+
+    private static bool HasParameter(Animator target, string name)
+    {
+        foreach (AnimatorControllerParameter parameter in target.parameters)
+            if (parameter.name == name) return true;
+        return false;
     }
 
     private bool IsHeadshot(Vector3 point)
