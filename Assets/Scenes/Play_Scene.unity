@@ -439,33 +439,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &637775241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637775234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c42c514b9a9445f8beff9822603a507, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PSXRetroLook
-  psxTemplate: {fileID: 2100000, guid: 34ff1d433f28415ebb137f0a917e8130, type: 2}
---- !u!114 &637775242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637775234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f94d1c3b7404fef80ebfeda83378328, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameLoop
-  candyToWin: 5
-  houseTime: 90
 --- !u!4 &637775235
 Transform:
   m_ObjectHideFlags: 0
@@ -678,6 +651,65 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &637775241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c42c514b9a9445f8beff9822603a507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PSXRetroLook
+  renderScale: 0.4
+  vertexResolution: 160
+  affineWarp: 1
+  colorDepth: 32
+  dithering: 1
+  lightSteps: 8
+  psxTemplate: {fileID: 2100000, guid: 34ff1d433f28415ebb137f0a917e8130, type: 2}
+  convertSceneMaterials: 1
+  rescanInterval: 1
+--- !u!114 &637775242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637775234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f94d1c3b7404fef80ebfeda83378328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameLoop
+  candyToWin: 5
+  houseTime: 90
+  firstHouseLit: 1
+  pauseTimerDuringDialogue: 1
+  warden: {fileID: 0}
+  wardenSpawnDistance: 25
+  sanctuaryRadius: 9
+  directionalLight: {fileID: 1451124782}
+  awakeLightColor: {r: 1, g: 0, b: 0, a: 1}
+  musicSource: {fileID: 637775240}
+  ambientMusic: {fileID: 8300000, guid: f279ede2974224aa5bb43693ee09d834, type: 3}
+  suspenseMusic: {fileID: 8300000, guid: b28fbbc2ac870418d9c222d5b69a7d49, type: 3}
+  conversation: {fileID: 0}
+  spawner: {fileID: 0}
+  player: {fileID: 0}
+  field: {fileID: 0}
+  mainMenuScene: Scene_MainMenu
+  onCandyChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onWin:
+    m_PersistentCalls:
+      m_Calls: []
+  onLose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &711309951
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,7 +2356,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.34117648, g: 0.54509807, b: 0.7490196, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

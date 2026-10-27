@@ -26,8 +26,12 @@ public class Warden : MonoBehaviour
     [Tooltip("Optional model to use instead of the placeholder body.")]
     [SerializeField] private GameObject modelPrefab;
     [SerializeField] private Color eyeColor = new Color(1f, 0.08f, 0.04f);
+    [Tooltip("Optional extra sound played once when the Warden first wakes. The existing procedural burst still plays too.")]
+    [SerializeField] private AudioClip wakeSound;
 
     public event Action CaughtPlayer;
+    public event Action Woke;
+    public event Action Froze;
     public State CurrentState { get; private set; } = State.Frozen;
     public bool IsAwake => CurrentState == State.Awake;
 
@@ -83,18 +87,26 @@ public class Warden : MonoBehaviour
             awakeTime = 0f;
             feet.pitch = 0.45f;
             feet.PlayOneShot(ProceduralAudio.Burst, 1f);
+            if (wakeSound != null) feet.PlayOneShot(wakeSound, 1f);
             voice.Play();
+            CurrentState = State.Awake;
+            Woke?.Invoke();
         }
-        CurrentState = State.Awake;
+        else
+        {
+            CurrentState = State.Awake;
+        }
         SetEyes(1f);
     }
 
     public void Freeze()
     {
         if (CurrentState == State.Caught) return;
+        bool wasAwake = CurrentState == State.Awake;
         CurrentState = State.Frozen;
         voice.Stop();
         SetEyes(0.35f);
+        if (wasAwake) Froze?.Invoke();
     }
 
     /// <summary>Puts the Warden right in front of the camera for the catch scare.</summary>
