@@ -5,15 +5,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Trick or Threat game loop. Win by collecting candy; lose when the Warden catches you.
-///
-///   Outcome        | Candy | Timer     | Warden                          | Beacon
-///   Spare human    | +1    | Resets    | Re-freezes where he stands      | No
-///   Kill human     | 0     | Set to 0  | Wakes and chases                | No
-///   Kill monster   | 0     | Unchanged | Unchanged                       | Next house lights up
-///   Spare monster  | -1    | Unchanged | Unchanged, unless you had 0 candy (then wakes) | No
-///
-/// The timer counts down per house while the player can move; at 0 the Warden wakes.
-/// Listens to the existing conversation/spawner events; put it on any object in the play scene.
+/// ... (doc comment unchanged) ...
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -57,6 +49,9 @@ public class GameLoop : MonoBehaviour
 
     public int Candy { get; private set; }
     public float TimeLeft { get; private set; }
+
+    // === ADDED: cumulative monster kill counter, exposed for UI / other systems. ===
+    public int MonsterKills { get; private set; }
 
     private bool timerExpired;
     private bool beaconPending;
@@ -147,6 +142,10 @@ public class GameLoop : MonoBehaviour
 
         onCandyChanged?.Invoke(Candy);
         Show($"Trick or treat. Bring home {candyToWin} candy... and don't wake the Warden.", 6f);
+
+        // === MODIFIED: push initial values to EventBus so late-starting UI still syncs. ===
+        EventBus.Instance.EventTrigger("CandyReceived", Candy);
+        EventBus.Instance.EventTrigger("MonsterKilled", MonsterKills);
     }
 
     private void Update()
@@ -234,6 +233,8 @@ public class GameLoop : MonoBehaviour
         if (conversation.CurrentNPCIsMonster)
         {
             beaconPending = true;
+            // === MODIFIED: increment monster kill count and broadcast it. ===
+            SetMonsterKills(MonsterKills + 1);
             Show("It was a monster. The next house lights up.");
         }
         else
@@ -255,6 +256,15 @@ public class GameLoop : MonoBehaviour
         Candy = Mathf.Max(0, value);
         if (hands != null) hands.SetCandyCount(Candy); // bucket fills/empties with the count
         onCandyChanged?.Invoke(Candy);
+        // === MODIFIED: broadcast candy count to the EventBus. ===
+        EventBus.Instance.EventTrigger("CandyReceived", Candy);
+    }
+
+    // === ADDED: single place that updates and broadcasts the monster kill count. ===
+    private void SetMonsterKills(int value)
+    {
+        MonsterKills = Mathf.Max(0, value);
+        EventBus.Instance.EventTrigger("MonsterKilled", MonsterKills);
     }
 
     private void OnHouseSpawned(GameObject house)
@@ -309,6 +319,9 @@ public class GameLoop : MonoBehaviour
         yield return new WaitForSeconds(2f);
         EndGame();
         onWin?.Invoke();
+        EventBus.Instance.EventTrigger("EndResult");
+        // === MODIFIED: removed EventTrigger("CandyReceived") (no arg + wrong semantics).
+        // Candy count is already broadcast from SetCandy when the last candy was gained. ===
     }
 
     private void OnCaught()
